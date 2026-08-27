@@ -62,6 +62,14 @@ del mismo proceso y garantiza una copia diaria cuando
 Esta modalidad requiere mantener una sola instancia. Si en el futuro se
 escala horizontalmente, el programador debe moverse a un worker o cron único.
 
+Runsite usa despliegues progresivos sin interrupción, que pueden solapar la
+instancia antigua y la nueva aunque el plan indique una sola instancia. Con
+SQLite local y una réplica S3 compartida no deben existir dos escritores:
+una vez cargados datos reales, detener primero el servicio, esperar su cierre
+y la sincronización final, y sólo entonces desplegar o arrancar la nueva
+instancia. Esto implica una interrupción breve. No activar despliegues
+automáticos hasta disponer de una estrategia de reemplazo sin solapamiento.
+
 ## Claves Web Push
 
 La pareja VAPID se genera una sola vez. La clave pública se guarda en
