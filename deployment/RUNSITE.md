@@ -45,6 +45,11 @@ después. Ningún secreto se publica en Git.
 La redirección HTTPS queda desactivada en Django porque Runsite finaliza TLS
 en su proxy. Las cookies seguras siguen activas.
 
+Runsite puede comprobar la salud con el hostname interno del servicio
+(`...svc.cluster.local`). Agregar ese hostname exacto a `AGENDE_ALLOWED_HOSTS`
+separado por coma, sin abrir todos los hosts con `*`. Verificar un HTTP 200:
+el panel puede marcar como exitoso incluso un HTTP 400.
+
 ## Inicio del contenedor
 
 `scripts/iniciar_runsite_con_litestream.py` crea los directorios efímeros y

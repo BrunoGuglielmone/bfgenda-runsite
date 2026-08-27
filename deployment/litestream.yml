@@ -17,5 +17,6 @@ dbs:
       region: auto
       force-path-style: true
       sign-payload: true
-      part-size: 5MB
+      # S3 exige 5 MiB (5242880 bytes); 5 MB decimales no alcanzan.
+      part-size: 5MiB
       concurrency: 1
