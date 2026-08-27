@@ -1,0 +1,21 @@
+logging:
+  level: info
+  type: text
+
+shutdown-sync-timeout: 30s
+shutdown-sync-interval: 500ms
+
+dbs:
+  - path: ${AGENDE_DATABASE_PATH}
+    monitor-interval: 1s
+    checkpoint-interval: 1m
+    replica:
+      type: s3
+      bucket: ${LITESTREAM_BUCKET}
+      path: bfgenda
+      endpoint: https://s3.runsite.app
+      region: auto
+      force-path-style: true
+      sign-payload: true
+      part-size: 5MB
+      concurrency: 1

@@ -1,4 +1,4 @@
-"""Prepara el almacenamiento persistente y arranca BFGenda en Runsite."""
+"""Aplica las migraciones y arranca BFGenda en Runsite."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from django.conf import settings  # noqa: E402
 from django.core.management import call_command  # noqa: E402
 
 
-def prepare_persistent_storage() -> None:
+def prepare_storage() -> None:
     """Crea las rutas configuradas antes de abrir SQLite o los registros."""
 
     Path(settings.DATABASES["default"]["NAME"]).parent.mkdir(
@@ -33,7 +33,7 @@ def prepare_persistent_storage() -> None:
 
 
 def main() -> int:
-    prepare_persistent_storage()
+    prepare_storage()
     call_command("migrate", interactive=False, verbosity=1)
 
     from scripts.servidor_agende import main as serve_main
