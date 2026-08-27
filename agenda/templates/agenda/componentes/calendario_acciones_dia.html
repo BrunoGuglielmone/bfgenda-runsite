@@ -1,0 +1,20 @@
+<div class="selected-day-actions">
+    <a
+        class="secondary-create-button"
+        href="{% url 'agenda:tarea_crear' %}?fecha={{ fecha_accion|date:'Y-m-d' }}"
+        data-modal-url="{% url 'agenda:tarea_crear' %}?fecha={{ fecha_accion|date:'Y-m-d' }}"
+    >
+        + Tarea
+    </a>
+
+    <a
+        class="secondary-create-button"
+        href="{% url 'agenda:evento_crear' %}?fecha={{ fecha_accion|date:'Y-m-d' }}"
+        data-modal-url="{% url 'agenda:evento_crear' %}?fecha={{ fecha_accion|date:'Y-m-d' }}"
+    >
+        + Evento
+    </a>
+
+    {% include "agenda/componentes/calendario_menu_repeticion.html" with fecha_accion=fecha_accion tipo_repeticion="semanal" only %}
+    {% include "agenda/componentes/calendario_menu_repeticion.html" with fecha_accion=fecha_accion tipo_repeticion="mensual" only %}
+</div>

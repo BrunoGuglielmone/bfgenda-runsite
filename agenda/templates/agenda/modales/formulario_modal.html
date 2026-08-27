@@ -1,0 +1,34 @@
+<header class="modal-form-header">
+    <span class="modal-form-icon" aria-hidden="true">{{ form_config.icon }}</span>
+
+    <div>
+        <p class="modal-form-eyebrow">{{ form_config.eyebrow }}</p>
+        <h2 id="app-modal-title">{{ form_config.title }}</h2>
+        <p>{{ form_config.description }}</p>
+    </div>
+</header>
+
+<form
+    method="post"
+    action="{{ form_action }}"
+    class="modal-form js-ajax-form"
+    {% if form_is_multipart %}enctype="multipart/form-data"{% endif %}
+    novalidate
+>
+    {% csrf_token %}
+
+    {% for hidden in form_config.hidden_fields %}
+        <input type="hidden" name="{{ hidden.name }}" value="{{ hidden.value }}">
+    {% endfor %}
+
+    {% include "agenda/componentes/formulario_campos.html" %}
+
+    <div class="modal-actions">
+        <button class="modal-cancel-button" type="button" data-modal-close>
+            Cancelar
+        </button>
+        <button class="modal-save-button" type="submit">
+            {{ form_config.submit_label }}
+        </button>
+    </div>
+</form>

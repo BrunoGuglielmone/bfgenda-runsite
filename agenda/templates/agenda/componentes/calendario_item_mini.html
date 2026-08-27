@@ -1,0 +1,22 @@
+<a
+    class="calendar-mini-item {{ elemento.tipo }}"
+    href="{{ elemento.url }}"
+    {% if elemento.modal_url %}
+        data-modal-url="{{ elemento.modal_url }}"
+    {% endif %}
+    title="{{ elemento.tipo_etiqueta }}: {{ elemento.titulo }}"
+    aria-label="{{ elemento.tipo_etiqueta }}: {{ elemento.titulo }}{% if elemento.hora != 'Sin hora' %}, {{ elemento.hora }}{% endif %}"
+>
+    <span
+        class="calendar-color-dot"
+        style="--item-color: {{ elemento.color }};"
+        aria-hidden="true"
+    ></span>
+
+    <span>
+        {% if elemento.hora != "Sin hora" %}
+            <small>{{ elemento.hora }}</small>
+        {% endif %}
+        {{ elemento.titulo }}
+    </span>
+</a>

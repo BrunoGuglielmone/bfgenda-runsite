@@ -1,0 +1,52 @@
+<div class="selected-day-item-row">
+    <a
+        class="selected-day-item"
+        href="{{ elemento.url }}"
+        {% if elemento.modal_url %}
+            data-modal-url="{{ elemento.modal_url }}"
+        {% endif %}
+    >
+        <span
+            class="selected-item-color"
+            style="--item-color: {{ elemento.color }};"
+            aria-hidden="true"
+        ></span>
+
+        <div class="selected-item-content">
+            <div class="selected-item-title">
+                <strong>{{ elemento.titulo }}</strong>
+
+                <span class="selected-item-type {{ elemento.tipo }}">
+                    {{ elemento.tipo_etiqueta }}
+                </span>
+            </div>
+
+            <div class="selected-item-metadata">
+                <span>{{ elemento.detalle_hora }}</span>
+                <span>{{ elemento.categoria }}</span>
+                <span>{{ elemento.estado }}</span>
+
+                {% if elemento.recurrencia_etiqueta %}
+                    <span class="selected-item-recurrence">
+                        {{ elemento.recurrencia_etiqueta }}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <span class="selected-item-edit" aria-hidden="true">
+            {{ elemento.accion_etiqueta }}
+        </span>
+    </a>
+
+    {% if elemento.serie_eliminar_url %}
+        <a
+            class="selected-series-delete"
+            href="{{ elemento.serie_eliminar_url }}"
+            data-modal-url="{{ elemento.serie_eliminar_url }}"
+            aria-label="Eliminar la serie completa de {{ elemento.titulo }}"
+        >
+            Eliminar serie
+        </a>
+    {% endif %}
+</div>

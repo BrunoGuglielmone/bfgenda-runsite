@@ -1,0 +1,93 @@
+<div
+    class="global-search-results"
+    data-search-results
+    aria-live="polite"
+    aria-busy="false"
+>
+    {% if not consulta_valida %}
+        <div class="search-guidance">
+            <span aria-hidden="true">⌕</span>
+            <div>
+                <strong>Busca en toda tu agenda</strong>
+                <p>
+                    Escribe al menos {{ minimo_caracteres }} caracteres para localizar
+                    tareas, eventos o categorías.
+                </p>
+            </div>
+        </div>
+    {% elif total_resultados == 0 %}
+        <div class="search-guidance no-results">
+            <span aria-hidden="true">∅</span>
+            <div>
+                <strong>No encontramos coincidencias</strong>
+                <p>
+                    Prueba con otra palabra, una ubicación, una categoría o un estado.
+                </p>
+            </div>
+        </div>
+    {% else %}
+        <p class="search-result-summary">
+            {{ total_resultados }} resultado{{ total_resultados|pluralize }}
+            para <strong>“{{ consulta }}”</strong>
+        </p>
+
+        <div class="search-result-groups">
+            {% for grupo in grupos %}
+                <section class="search-result-group">
+                    <header class="search-result-group-header">
+                        <div>
+                            <span aria-hidden="true">{{ grupo.icon }}</span>
+                            <h3>{{ grupo.title }}</h3>
+                        </div>
+                        <strong>{{ grupo.total }}</strong>
+                    </header>
+
+                    <div class="search-result-list">
+                        {% for elemento in grupo.items %}
+                            <a
+                                class="search-result-item {{ elemento.kind }}"
+                                href="{{ elemento.url }}"
+                                data-app-link
+                                style="--search-result-color: {{ elemento.color }};"
+                            >
+                                <span class="search-result-color" aria-hidden="true"></span>
+
+                                <span class="search-result-icon" aria-hidden="true">
+                                    {{ elemento.icon }}
+                                </span>
+
+                                <span class="search-result-content">
+                                    <span class="search-result-title-row">
+                                        <strong>{{ elemento.title }}</strong>
+                                        <small>{{ elemento.type_label }}</small>
+                                    </span>
+
+                                    {% if elemento.description %}
+                                        <span class="search-result-description">
+                                            {{ elemento.description }}
+                                        </span>
+                                    {% endif %}
+
+                                    <span class="search-result-metadata">
+                                        {% for dato in elemento.metadata %}
+                                            <span>{{ dato }}</span>
+                                        {% endfor %}
+                                    </span>
+                                </span>
+
+                                <span class="search-result-arrow" aria-hidden="true">→</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+
+                    {% if grupo.hidden_count %}
+                        <p class="search-result-hidden-note">
+                            Hay {{ grupo.hidden_count }} resultado{{ grupo.hidden_count|pluralize }}
+                            adicional{{ grupo.hidden_count|pluralize:"es" }} en este grupo.
+                        </p>
+                    {% endif %}
+                </section>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

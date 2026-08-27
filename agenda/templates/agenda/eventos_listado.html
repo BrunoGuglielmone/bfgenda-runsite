@@ -1,0 +1,216 @@
+{% extends "agenda/base.html" %}
+{% load static %}
+
+{% block title %}Eventos | BFGenda{% endblock %}
+
+{% block extra_css %}
+    <link data-page-style rel="stylesheet" href="{% static 'agenda/css/eventos.css' %}?v=20260731-2">
+{% endblock %}
+
+{% block content %}
+    <header class="events-header">
+        <div>
+            <p class="current-date">{{ fecha_actual|date:"l, j F Y" }}</p>
+            <h1>Eventos</h1>
+            <p>Consulta, crea y edita tus compromisos desde un único lugar.</p>
+        </div>
+
+        <a
+            class="create-button"
+            href="{% url 'agenda:evento_crear' %}"
+            data-modal-url="{% url 'agenda:evento_crear' %}"
+        >
+            <span aria-hidden="true">+</span>
+            Nuevo evento
+        </a>
+    </header>
+
+    <nav class="event-filters" aria-label="Filtros de eventos">
+        <a class="event-filter{% if filtro_actual == 'todos' %} active{% endif %}" href="{% url 'agenda:eventos_listado' %}?filtro=todos"
+                    data-app-link>
+            Todos <span>{{ cantidad_eventos }}</span>
+        </a>
+        <a class="event-filter{% if filtro_actual == 'hoy' %} active{% endif %}" href="{% url 'agenda:eventos_listado' %}?filtro=hoy"
+                    data-app-link>
+            Hoy <span>{{ cantidad_eventos_hoy }}</span>
+        </a>
+        <a class="event-filter{% if filtro_actual == 'semana' %} active{% endif %}" href="{% url 'agenda:eventos_listado' %}?filtro=semana"
+                    data-app-link>
+            Semana <span>{{ cantidad_eventos_semana }}</span>
+        </a>
+        <a class="event-filter{% if filtro_actual == 'proximos' %} active{% endif %}" href="{% url 'agenda:eventos_listado' %}?filtro=proximos"
+                    data-app-link>
+            Próximos <span>{{ cantidad_eventos_proximos }}</span>
+        </a>
+        <a class="event-filter{% if filtro_actual == 'pasados' %} active{% endif %}" href="{% url 'agenda:eventos_listado' %}?filtro=pasados"
+                    data-app-link>
+            Pasados <span>{{ cantidad_eventos_pasados }}</span>
+        </a>
+        <a class="event-filter{% if filtro_actual == 'cancelados' %} active{% endif %}" href="{% url 'agenda:eventos_listado' %}?filtro=cancelados"
+                    data-app-link>
+            Cancelados <span>{{ cantidad_eventos_cancelados }}</span>
+        </a>
+    </nav>
+
+    <section class="events-panel">
+        <header class="events-panel-header">
+            <p class="panel-label">Listado</p>
+            <h2>{{ cantidad_resultados }} evento{{ cantidad_resultados|pluralize }}</h2>
+        </header>
+
+        {% if eventos %}
+            <div class="events-list">
+                {% for evento in eventos %}
+                    <article
+                        id="evento-{{ evento.id }}"
+                        class="event-list-item{% if evento.estado == 'realizado' %} completed{% endif %}{% if evento.estado == 'cancelado' %} cancelled{% endif %}"
+                    >
+                        <span
+                            class="event-list-color"
+                            style="--event-color: {{ evento.categoria.color|default:'#9A9EAD' }};"
+                            aria-hidden="true"
+                        ></span>
+
+                        <div class="event-list-date">
+                            <strong>{{ evento.inicio|date:"d" }}</strong>
+                            <span>{{ evento.inicio|date:"M" }}</span>
+                            <small>{{ evento.inicio|date:"Y" }}</small>
+                        </div>
+
+                        <div class="event-list-content">
+                            <div class="event-list-title">
+                                <div>
+                                    <h3>{{ evento.titulo }}</h3>
+                                    <span
+                                        class="
+                                            event-status
+
+                                            {% if evento.estado == 'cancelado' %}
+                                                status-cancelado
+                                            {% elif evento.esta_pasado %}
+                                                status-pasado
+                                            {% else %}
+                                                status-programado
+                                            {% endif %}
+                                        "
+                                    >
+                                        {% if evento.estado == 'cancelado' %}
+                                            Cancelado
+                                        {% elif evento.esta_pasado %}
+                                            Pasado
+                                        {% else %}
+                                            Próximo
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {% if evento.descripcion %}
+                                <p class="event-list-description">{{ evento.descripcion }}</p>
+                            {% endif %}
+
+                            <div class="event-list-metadata">
+                                {% if evento.todo_el_dia %}
+                                    <span>Todo el día</span>
+                                {% else %}
+                                    <span>{{ evento.inicio|date:"d/m/Y H:i" }}</span>
+                                    <span>{{ evento.fin|date:"d/m/Y H:i" }}</span>
+                                {% endif %}
+                                <span>{{ evento.categoria.nombre|default:"Sin categoría" }}</span>
+                                {% if evento.ubicacion %}<span>{{ evento.ubicacion }}</span>{% endif %}
+                            </div>
+
+                            <div class="event-list-actions">
+                                <a
+                                    class="event-list-action edit-event-action"
+                                    href="{% url 'agenda:evento_editar' evento.id %}"
+                                    data-modal-url="{% url 'agenda:evento_editar' evento.id %}"
+                                    aria-label="Editar evento {{ evento.titulo }}"
+                                    title="Editar evento"
+                                >
+                                    <span
+                                        class="event-action-icon"
+                                        aria-hidden="true"
+                                    >
+                                        ✎
+                                    </span>
+                                    <span>Editar</span>
+                                </a>
+
+                                <a
+                                    class="event-list-action delete-event-action"
+                                    href="{% url 'agenda:evento_eliminar' evento.id %}"
+                                    data-modal-url="{% url 'agenda:evento_eliminar' evento.id %}"
+                                    aria-label="Eliminar evento {{ evento.titulo }}"
+                                    title="Eliminar evento"
+                                >
+                                    <span
+                                        class="event-action-icon"
+                                        aria-hidden="true"
+                                    >
+                                        ×
+                                    </span>
+                                    <span>Eliminar</span>
+                                </a>
+
+                                {% if evento.estado == 'cancelado' %}
+                                    <form
+                                        method="post"
+                                        action="{% url 'agenda:evento_restaurar' evento.id %}"
+                                        data-ajax-form
+                                    >
+                                        {% csrf_token %}
+                                        <button
+                                            class="event-list-action restore-event-action"
+                                            type="submit"
+                                            aria-label="Restaurar evento {{ evento.titulo }}"
+                                            title="Restaurar evento"
+                                        >
+                                            <span
+                                                class="event-action-icon"
+                                                aria-hidden="true"
+                                            >
+                                                ↺
+                                            </span>
+                                            <span>Restaurar</span>
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form
+                                        method="post"
+                                        action="{% url 'agenda:evento_cancelar' evento.id %}"
+                                        data-ajax-form
+                                    >
+                                        {% csrf_token %}
+                                        <button
+                                            class="event-list-action cancel-event-action"
+                                            type="submit"
+                                            aria-label="Cancelar evento {{ evento.titulo }}"
+                                            title="Cancelar evento"
+                                        >
+                                            <span
+                                                class="event-action-icon"
+                                                aria-hidden="true"
+                                            >
+                                                −
+                                            </span>
+                                            <span>Cancelar</span>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="events-empty-state">
+                <span aria-hidden="true">◷</span>
+                <div>
+                    <strong>No hay eventos en esta sección</strong>
+                    <p>Cambia el filtro o crea un nuevo evento.</p>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

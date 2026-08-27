@@ -1,0 +1,27 @@
+<details class="repeat-create-menu">
+    <summary>
+        {% if tipo_repeticion == "mensual" %}
+            Todos los {{ fecha_accion|date:"j" }}
+        {% else %}
+            Todos los {{ fecha_accion|date:"l"|lower }}
+        {% endif %}
+    </summary>
+
+    <div class="repeat-create-options">
+        <a
+            href="{% url 'agenda:tarea_crear' %}?fecha={{ fecha_accion|date:'Y-m-d' }}&repetir={{ tipo_repeticion }}"
+            data-modal-url="{% url 'agenda:tarea_crear' %}?fecha={{ fecha_accion|date:'Y-m-d' }}&repetir={{ tipo_repeticion }}"
+        >
+            + Tarea
+            {% if tipo_repeticion == "mensual" %}mensual{% else %}semanal{% endif %}
+        </a>
+
+        <a
+            href="{% url 'agenda:evento_crear' %}?fecha={{ fecha_accion|date:'Y-m-d' }}&repetir={{ tipo_repeticion }}"
+            data-modal-url="{% url 'agenda:evento_crear' %}?fecha={{ fecha_accion|date:'Y-m-d' }}&repetir={{ tipo_repeticion }}"
+        >
+            + Evento
+            {% if tipo_repeticion == "mensual" %}mensual{% else %}semanal{% endif %}
+        </a>
+    </div>
+</details>

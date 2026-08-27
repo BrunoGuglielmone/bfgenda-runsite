@@ -1,0 +1,621 @@
+{% extends "agenda/base.html" %}
+
+{% block title %}
+    Inicio | BFGenda
+{% endblock %}
+
+{% block content %}
+    <header class="topbar">
+        <div>
+            <p class="current-date">
+                {{ fecha_actual|date:"l, j F Y" }}
+            </p>
+
+            <h1>
+                {{ saludo }},
+                {{ request.user.first_name|default:request.user.username }}
+            </h1>
+
+            <p class="welcome-text">
+                Aquí podrás organizar tus actividades, eventos y tareas.
+            </p>
+        </div>
+    </header>
+
+    <section
+        class="summary-grid"
+        aria-label="Resumen de la agenda"
+    >
+        <!-- ==================================================
+             TAREAS PARA HOY
+             ================================================== -->
+        <article class="dashboard-card">
+            <div class="card-header">
+                <div>
+                    <p class="card-label">
+                        Hoy
+                    </p>
+
+                    <h2>
+                        Tareas del día
+                    </h2>
+                </div>
+
+                <span class="counter">
+                    {{ tareas_hoy|length }}
+                </span>
+            </div>
+
+            {% if tareas_hoy %}
+                <div class="task-list">
+                    {% for tarea in tareas_hoy %}
+                        <article class="task-item">
+                            <form
+                                method="post"
+                                action="{% url 'agenda:tarea_completar' tarea.id %}"
+                                class="task-complete-form"
+                                data-ajax-form
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    class="task-marker task-complete-button"
+                                    type="submit"
+                                    aria-label="Marcar {{ tarea.titulo }} como completada"
+                                    title="Marcar como completada"
+                                >
+                                    ✓
+                                </button>
+                            </form>
+
+                            <div class="task-information">
+                                <strong>
+                                    {{ tarea.titulo }}
+                                </strong>
+
+                                <div class="task-metadata">
+                                    {% if tarea.hora_limite %}
+                                        <span>
+                                            {{ tarea.hora_limite|time:"H:i" }}
+                                        </span>
+                                    {% endif %}
+
+                                    <span
+                                        class="metadata-category"
+                                        style="--metadata-category-color: {{ tarea.categoria.color|default:'#9A9EAD' }};"
+                                    >
+                                        <span
+                                            class="metadata-category-dot"
+                                            aria-hidden="true"
+                                        ></span>
+                                        {{ tarea.categoria.nombre|default:"Sin categoría" }}
+                                    </span>
+
+                                    <span>
+                                        {{ tarea.get_prioridad_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <span
+                        class="empty-icon"
+                        aria-hidden="true"
+                    >
+                        ○
+                    </span>
+
+                    <div>
+                        <strong>
+                            No tienes tareas para hoy
+                        </strong>
+
+                        <p>
+                            Las tareas que venzan hoy aparecerán aquí.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </article>
+
+        <!-- ==================================================
+             ESTADO GENERAL
+             ================================================== -->
+        <article class="dashboard-card">
+            <div class="card-header">
+                <div>
+                    <p class="card-label">
+                        Resumen de tareas
+                    </p>
+
+                    <h2>
+                        Estado general
+                    </h2>
+                </div>
+            </div>
+
+            <div class="statistics">
+                <a
+                    class="statistic statistic-button"
+                    href="{% url 'agenda:tareas_listado' %}?filtro=pendientes"
+                    data-modal-url="{% url 'agenda:tareas_resumen' %}?tipo=pendientes"
+                    aria-label="Ver tareas pendientes"
+                >
+                    <strong>{{ cantidad_pendientes }}</strong>
+                    <span>Pendientes</span>
+                    <small>Ver detalle</small>
+                </a>
+
+                <a
+                    class="statistic statistic-button"
+                    href="{% url 'agenda:tareas_listado' %}?filtro=vencidas"
+                    data-modal-url="{% url 'agenda:tareas_resumen' %}?tipo=vencidas"
+                    aria-label="Ver tareas vencidas"
+                >
+                    <strong>{{ cantidad_vencidas }}</strong>
+                    <span>Vencidas</span>
+                    <small>Ver detalle</small>
+                </a>
+
+                <a
+                    class="statistic statistic-button"
+                    href="{% url 'agenda:tareas_listado' %}?filtro=semana"
+                    data-modal-url="{% url 'agenda:tareas_resumen' %}?tipo=semana"
+                    aria-label="Ver tareas de esta semana"
+                >
+                    <strong>{{ cantidad_semana }}</strong>
+                    <span>Esta semana</span>
+                    <small>Ver detalle</small>
+                </a>
+            </div>
+        </article>
+
+        <!-- ==================================================
+             EVENTOS PARA HOY
+             ================================================== -->
+        <article class="dashboard-card">
+            <div class="card-header">
+                <div>
+                    <p class="card-label">
+                        Agenda
+                    </p>
+
+                    <h2>
+                        Eventos de hoy
+                    </h2>
+                </div>
+
+                <a
+                    class="text-link"
+                    href="{% url 'agenda:calendario' %}?vista=dia&dia={{ fecha_actual|date:'Y-m-d' }}"
+                >
+                    Ver calendario
+                </a>
+            </div>
+
+            {% if eventos_hoy %}
+                <div class="task-list">
+                    {% for evento in eventos_hoy %}
+                        <article class="task-item">
+                            <div
+                                class="
+                                    event-time-badge
+
+                                    {% if evento.todo_el_dia %}
+                                        all-day
+                                    {% endif %}
+                                "
+                            >
+                                {% if evento.todo_el_dia %}
+                                    <strong>
+                                        Todo
+                                    </strong>
+
+                                    <span>
+                                        el día
+                                    </span>
+                                {% else %}
+                                    <strong>
+                                        {{ evento.inicio|date:"H:i" }}
+                                    </strong>
+
+                                    <span>
+                                        {{ evento.fin|date:"H:i" }}
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <a
+                                class="task-information dashboard-read-link"
+                                href="{% url 'agenda:eventos_listado' %}?filtro=hoy#evento-{{ evento.id }}"
+                            >
+                                <strong>
+                                    {{ evento.titulo }}
+                                </strong>
+
+                                <div class="task-metadata">
+                                    <span
+                                        class="metadata-category"
+                                        style="--metadata-category-color: {{ evento.categoria.color|default:'#9A9EAD' }};"
+                                    >
+                                        <span
+                                            class="metadata-category-dot"
+                                            aria-hidden="true"
+                                        ></span>
+                                        {{ evento.categoria.nombre|default:"Sin categoría" }}
+                                    </span>
+
+                                    {% if evento.ubicacion %}
+                                        <span>
+                                            {{ evento.ubicacion }}
+                                        </span>
+                                    {% endif %}
+
+                                    <span>
+                                        {{ evento.get_estado_display }}
+                                    </span>
+                                </div>
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state compact">
+                    <span
+                        class="empty-icon"
+                        aria-hidden="true"
+                    >
+                        ▦
+                    </span>
+
+                    <div>
+                        <strong>
+                            No tienes eventos para hoy
+                        </strong>
+
+                        <p>
+                            Los compromisos de la jornada aparecerán aquí.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </article>
+
+        <!-- ==================================================
+             TAREAS SIN FECHA
+             ================================================== -->
+        <article class="dashboard-card">
+            <div class="card-header">
+                <div>
+                    <p class="card-label">
+                        Bandeja de tareas
+                    </p>
+
+                    <h2>
+                        Tareas sin fecha
+                        {% if cantidad_sin_fecha_olvidadas %}
+                            <span class="forgotten-task-badge" title="Tareas sin fecha desde hace al menos 7 días">
+                                {{ cantidad_sin_fecha_olvidadas }} olvidada{{ cantidad_sin_fecha_olvidadas|pluralize }}
+                            </span>
+                        {% endif %}
+                    </h2>
+                </div>
+
+                <a
+                    class="text-link"
+                    href="{% url 'agenda:tareas_listado' %}?filtro=sin_fecha"
+                >
+                    Organizar
+                </a>
+            </div>
+
+            {% if tareas_sin_fecha %}
+                <div class="task-list">
+                    {% for tarea in tareas_sin_fecha %}
+                        <article class="task-item">
+                            <form
+                                method="post"
+                                action="{% url 'agenda:tarea_completar' tarea.id %}"
+                                class="task-complete-form"
+                                data-ajax-form
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    class="task-marker task-complete-button"
+                                    type="submit"
+                                    aria-label="Marcar {{ tarea.titulo }} como completada"
+                                    title="Marcar como completada"
+                                >
+                                    ✓
+                                </button>
+                            </form>
+
+                            <div class="task-information">
+                                <strong>
+                                    {{ tarea.titulo }}
+                                </strong>
+
+                                <div class="task-metadata">
+                                    <span
+                                        class="metadata-category"
+                                        style="--metadata-category-color: {{ tarea.categoria.color|default:'#9A9EAD' }};"
+                                    >
+                                        <span
+                                            class="metadata-category-dot"
+                                            aria-hidden="true"
+                                        ></span>
+                                        {{ tarea.categoria.nombre|default:"Sin categoría" }}
+                                    </span>
+
+                                    <span>
+                                        {{ tarea.get_prioridad_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state compact">
+                    <span
+                        class="empty-icon"
+                        aria-hidden="true"
+                    >
+                        □
+                    </span>
+
+                    <div>
+                        <strong>
+                            La bandeja está vacía
+                        </strong>
+
+                        <p>
+                            Aquí aparecerán las tareas que todavía no tengan fecha.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </article>
+
+        <!-- ==================================================
+             PRÓXIMAS TAREAS
+             ================================================== -->
+        <article class="dashboard-card">
+            <div class="card-header">
+                <div>
+                    <p class="card-label">
+                        Próximas
+                    </p>
+
+                    <h2>
+                        Tareas con fecha
+                    </h2>
+                </div>
+
+                <a
+                    class="text-link"
+                    href="{% url 'agenda:tareas_listado' %}?filtro=proximas"
+                >
+                    Ver todas
+                </a>
+            </div>
+
+            {% if tareas_proximas %}
+                <div class="task-list">
+                    {% for tarea in tareas_proximas %}
+                        <article class="task-item">
+                            <form
+                                method="post"
+                                action="{% url 'agenda:tarea_completar' tarea.id %}"
+                                class="task-complete-form"
+                                data-ajax-form
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    class="task-marker task-complete-button"
+                                    type="submit"
+                                    aria-label="Marcar {{ tarea.titulo }} como completada"
+                                    title="Marcar como completada"
+                                >
+                                    ✓
+                                </button>
+                            </form>
+
+                            <div class="task-information">
+                                <strong>
+                                    {{ tarea.titulo }}
+                                </strong>
+
+                                <div class="task-metadata">
+                                    <span>
+                                        {{ tarea.fecha_limite|date:"D d/m" }}
+                                    </span>
+
+                                    {% if tarea.hora_limite %}
+                                        <span>
+                                            {{ tarea.hora_limite|time:"H:i" }}
+                                        </span>
+                                    {% endif %}
+
+                                    <span
+                                        class="metadata-category"
+                                        style="--metadata-category-color: {{ tarea.categoria.color|default:'#9A9EAD' }};"
+                                    >
+                                        <span
+                                            class="metadata-category-dot"
+                                            aria-hidden="true"
+                                        ></span>
+                                        {{ tarea.categoria.nombre|default:"Sin categoría" }}
+                                    </span>
+
+                                    <span>
+                                        {{ tarea.get_prioridad_display }}
+                                    </span>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state compact">
+                    <span
+                        class="empty-icon"
+                        aria-hidden="true"
+                    >
+                        ✓
+                    </span>
+
+                    <div>
+                        <strong>
+                            No hay tareas próximas
+                        </strong>
+
+                        <p>
+                            Las tareas futuras con fecha límite aparecerán aquí.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </article>
+
+        <!-- ==================================================
+             PRÓXIMOS EVENTOS
+             ================================================== -->
+        <article class="dashboard-card">
+            <div class="card-header">
+                <div>
+                    <p class="card-label">
+                        Resumen de eventos
+                    </p>
+
+                    <h2>
+                        Eventos próximos
+                    </h2>
+                </div>
+
+                <a
+                    class="text-link"
+                    href="{% url 'agenda:eventos_listado' %}?filtro=proximos"
+                >
+                    Abrir Eventos
+                </a>
+            </div>
+
+            <div class="event-statistics">
+                <a
+                    class="event-statistic-button"
+                    href="{% url 'agenda:eventos_listado' %}?filtro=hoy"
+                    data-modal-url="{% url 'agenda:eventos_resumen' %}?tipo=hoy"
+                >
+                    <strong>{{ cantidad_eventos_hoy }}</strong>
+                    <span>Hoy</span>
+                    <small>Ver detalle</small>
+                </a>
+
+                <a
+                    class="event-statistic-button"
+                    href="{% url 'agenda:eventos_listado' %}?filtro=semana"
+                    data-modal-url="{% url 'agenda:eventos_resumen' %}?tipo=semana"
+                >
+                    <strong>{{ cantidad_eventos_semana }}</strong>
+                    <span>Esta semana</span>
+                    <small>Ver detalle</small>
+                </a>
+
+                <a
+                    class="event-statistic-button"
+                    href="{% url 'agenda:eventos_listado' %}?filtro=proximos"
+                    data-modal-url="{% url 'agenda:eventos_resumen' %}?tipo=proximos"
+                >
+                    <strong>{{ cantidad_eventos_proximos }}</strong>
+                    <span>Próximos</span>
+                    <small>Ver detalle</small>
+                </a>
+            </div>
+
+            {% if eventos_proximos %}
+                <div class="task-list">
+                    {% for evento in eventos_proximos %}
+                        <article class="task-item">
+                            <div class="event-date-badge">
+                                <strong>
+                                    {{ evento.inicio|date:"d" }}
+                                </strong>
+
+                                <span>
+                                    {{ evento.inicio|date:"M" }}
+                                </span>
+                            </div>
+
+                            <a
+                                class="task-information dashboard-read-link"
+                                href="{% url 'agenda:eventos_listado' %}?filtro=proximos#evento-{{ evento.id }}"
+                            >
+                                <strong>
+                                    {{ evento.titulo }}
+                                </strong>
+
+                                <div class="task-metadata">
+                                    {% if evento.todo_el_dia %}
+                                        <span>
+                                            Todo el día
+                                        </span>
+                                    {% else %}
+                                        <span>
+                                            {{ evento.inicio|date:"H:i" }}
+                                        </span>
+                                    {% endif %}
+
+                                    <span
+                                        class="metadata-category"
+                                        style="--metadata-category-color: {{ evento.categoria.color|default:'#9A9EAD' }};"
+                                    >
+                                        <span
+                                            class="metadata-category-dot"
+                                            aria-hidden="true"
+                                        ></span>
+                                        {{ evento.categoria.nombre|default:"Sin categoría" }}
+                                    </span>
+
+                                    {% if evento.ubicacion %}
+                                        <span>
+                                            {{ evento.ubicacion }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state compact">
+                    <span
+                        class="empty-icon"
+                        aria-hidden="true"
+                    >
+                        ▦
+                    </span>
+
+                    <div>
+                        <strong>
+                            No hay eventos próximos
+                        </strong>
+
+                        <p>
+                            Los próximos compromisos aparecerán aquí.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </article>
+    </section>
+
+    {% if auto_modal_url %}
+        <span data-auto-modal-url="{{ auto_modal_url }}" hidden></span>
+    {% endif %}
+{% endblock %}

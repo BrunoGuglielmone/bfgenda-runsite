@@ -1,0 +1,386 @@
+{% extends "agenda/base.html" %}
+{% load static %}
+
+{% block title %}
+    Tareas | BFGenda
+{% endblock %}
+
+{% block extra_css %}
+    <link data-page-style
+        rel="stylesheet"
+        href="{% static 'agenda/css/tareas.css' %}?v=20260801-1"
+    >
+{% endblock %}
+
+{% block content %}
+    <!-- Encabezado de la pantalla -->
+    <header class="tasks-header">
+        <div>
+            <p class="current-date">
+                {{ fecha_actual|date:"l, j F Y" }}
+            </p>
+
+            <h1>
+                Tareas
+            </h1>
+
+            <p>
+                Consulta y organiza todas tus tareas personales.
+            </p>
+        </div>
+
+        <a
+            class="create-button"
+            href="{% url 'agenda:tarea_crear' %}"
+            data-modal-url="{% url 'agenda:tarea_crear' %}"
+        >
+            <span aria-hidden="true">+</span>
+            Nueva tarea
+        </a>
+    </header>
+
+    <!-- Filtros -->
+    <nav
+        class="task-filters"
+        aria-label="Filtros de tareas"
+    >
+        <a
+            class="
+                filter-link
+                {% if filtro_actual == 'todas' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'agenda:tareas_listado' %}?filtro=todas"
+                    data-app-link>
+            Todas
+
+            <span>
+                {{ cantidad_todas }}
+            </span>
+        </a>
+
+        <a
+            class="
+                filter-link
+                {% if filtro_actual == 'pendientes' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'agenda:tareas_listado' %}?filtro=pendientes"
+                    data-app-link>
+            Pendientes
+
+            <span>
+                {{ cantidad_pendientes }}
+            </span>
+        </a>
+
+        <a
+            class="
+                filter-link
+                {% if filtro_actual == 'hoy' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'agenda:tareas_listado' %}?filtro=hoy"
+                    data-app-link>
+            Hoy
+
+            <span>
+                {{ cantidad_hoy }}
+            </span>
+        </a>
+
+        <a
+            class="
+                filter-link
+                {% if filtro_actual == 'semana' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'agenda:tareas_listado' %}?filtro=semana"
+                    data-app-link>
+            Semana
+
+            <span>
+                {{ cantidad_semana }}
+            </span>
+        </a>
+
+        <a
+            class="
+                filter-link
+                {% if filtro_actual == 'proximas' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'agenda:tareas_listado' %}?filtro=proximas"
+                    data-app-link>
+            Próximas
+
+            <span>
+                {{ cantidad_proximas }}
+            </span>
+        </a>
+
+        <a
+            class="
+                filter-link
+                {% if filtro_actual == 'sin_fecha' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'agenda:tareas_listado' %}?filtro=sin_fecha"
+                    data-app-link>
+            Sin fecha
+
+            <span>
+                {{ cantidad_sin_fecha }}
+            </span>
+        </a>
+
+        <a
+            class="
+                filter-link
+                {% if filtro_actual == 'vencidas' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'agenda:tareas_listado' %}?filtro=vencidas"
+                    data-app-link>
+            Vencidas
+
+            <span>
+                {{ cantidad_vencidas }}
+            </span>
+        </a>
+
+        <a
+            class="
+                filter-link
+                {% if filtro_actual == 'completadas' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'agenda:tareas_listado' %}?filtro=completadas"
+                    data-app-link>
+            Completadas
+
+            <span>
+                {{ cantidad_completadas }}
+            </span>
+        </a>
+    </nav>
+
+    <!-- Panel principal de tareas -->
+    <section class="tasks-panel">
+        <header class="tasks-panel-header">
+            <div>
+                <p class="panel-label">
+                    Listado
+                </p>
+
+                <h2>
+                    {{ cantidad_resultados }}
+                    tarea{{ cantidad_resultados|pluralize }}
+                </h2>
+            </div>
+        </header>
+
+        {% if tareas %}
+            <div class="complete-task-list">
+                {% for tarea in tareas %}
+                    <article
+                        id="tarea-{{ tarea.id }}"
+                        class="
+                            complete-task-item
+                            {% if tarea.estado == 'completada' %}
+                                completed
+                            {% endif %}
+                        "
+                        tabindex="-1"
+                    >
+                        <!-- Color de la categoría -->
+                        <div
+                            class="category-indicator"
+                            style="
+                                --category-color:
+                                {{ tarea.categoria.color|default:'#9A9EAD' }};
+                            "
+                            aria-hidden="true"
+                        ></div>
+
+                        <div class="complete-task-content">
+                            <!-- Título y prioridad -->
+                            <div class="complete-task-title">
+                                <h3>
+                                    {{ tarea.titulo }}
+                                </h3>
+
+                                <span
+                                    class="
+                                        priority-badge
+                                        priority-{{ tarea.prioridad }}
+                                    "
+                                >
+                                    {{ tarea.get_prioridad_display }}
+                                </span>
+                            </div>
+
+                            <!-- Descripción -->
+                            {% if tarea.descripcion %}
+                                <p class="task-description">
+                                    {{ tarea.descripcion }}
+                                </p>
+                            {% endif %}
+
+                            <!-- Información de la tarea -->
+                            <div class="complete-task-metadata">
+                                {% if tarea.fecha_limite %}
+                                    <span>
+                                        Fecha:
+                                        {{ tarea.fecha_limite|date:"d/m/Y" }}
+                                    </span>
+                                {% else %}
+                                    <span>
+                                        Sin fecha
+                                    </span>
+                                {% endif %}
+
+                                {% if tarea.hora_limite %}
+                                    <span>
+                                        Hora:
+                                        {{ tarea.hora_limite|time:"H:i" }}
+                                    </span>
+                                {% endif %}
+
+                                {% if tarea.categoria %}
+                                    <span>
+                                        {{ tarea.categoria.nombre }}
+                                    </span>
+                                {% else %}
+                                    <span>
+                                        Sin categoría
+                                    </span>
+                                {% endif %}
+
+                                <span>
+                                    {{ tarea.get_estado_display }}
+                                </span>
+                            </div>
+
+                            <!-- Acciones disponibles -->
+                            <div class="task-actions">
+                                <a
+                                    class="task-action edit-action"
+                                    href="{% url 'agenda:tarea_editar' tarea.id %}"
+                                    data-modal-url="{% url 'agenda:tarea_editar' tarea.id %}"
+                                    aria-label="Editar tarea {{ tarea.titulo }}"
+                                    title="Editar tarea"
+                                >
+                                    <span
+                                        class="task-action-icon"
+                                        aria-hidden="true"
+                                    >
+                                        ✎
+                                    </span>
+                                    <span>Editar</span>
+                                </a>
+
+                                <a
+                                    class="task-action delete-action"
+                                    href="{% url 'agenda:tarea_eliminar' tarea.id %}"
+                                    data-modal-url="{% url 'agenda:tarea_eliminar' tarea.id %}"
+                                    aria-label="Eliminar tarea {{ tarea.titulo }}"
+                                    title="Eliminar tarea"
+                                >
+                                    <span
+                                        class="task-action-icon"
+                                        aria-hidden="true"
+                                    >
+                                        ×
+                                    </span>
+                                    <span>Eliminar</span>
+                                </a>
+
+                                {% if tarea.estado == 'completada' %}
+                                    <!-- Restaurar tarea -->
+                                    <form
+                                        method="post"
+                                        action="{% url 'agenda:tarea_restaurar' tarea.id %}"
+                                        data-ajax-form
+                                    >
+                                        {% csrf_token %}
+
+                                        <button
+                                            class="task-action restore-action"
+                                            type="submit"
+                                            aria-label="Restaurar tarea {{ tarea.titulo }}"
+                                            title="Restaurar tarea"
+                                        >
+                                            <span
+                                                class="task-action-icon"
+                                                aria-hidden="true"
+                                            >
+                                                ↺
+                                            </span>
+                                            <span>Restaurar</span>
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <!-- Completar tarea -->
+                                    <form
+                                        method="post"
+                                        action="{% url 'agenda:tarea_completar' tarea.id %}"
+                                        data-ajax-form
+                                    >
+                                        {% csrf_token %}
+
+                                        <input
+                                            type="hidden"
+                                            name="destino"
+                                            value="tareas"
+                                        >
+
+                                        <button
+                                            class="task-action complete-action"
+                                            type="submit"
+                                            aria-label="Completar tarea {{ tarea.titulo }}"
+                                            title="Completar tarea"
+                                        >
+                                            <span
+                                                class="task-action-icon"
+                                                aria-hidden="true"
+                                            >
+                                                ✓
+                                            </span>
+                                            <span>Completar</span>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Mensaje cuando el filtro no tiene resultados -->
+            <div class="tasks-empty-state">
+                <span aria-hidden="true">
+                    ✓
+                </span>
+
+                <div>
+                    <strong>
+                        No hay tareas en esta sección
+                    </strong>
+
+                    <p>
+                        Cambia el filtro o crea una nueva tarea.
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

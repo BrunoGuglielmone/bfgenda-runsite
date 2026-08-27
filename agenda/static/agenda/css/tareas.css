@@ -1,0 +1,474 @@
+.tasks-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 26px;
+}
+
+.tasks-header h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 3vw, 2.45rem);
+}
+
+.tasks-header > div > p:last-child {
+    margin: 9px 0 0;
+    color: var(--text-secondary);
+}
+
+.task-filters {
+    display: flex;
+    gap: 9px;
+    margin-bottom: 22px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.filter-link {
+    display: inline-flex;
+    min-height: 40px;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    padding: 0 13px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease;
+}
+
+.filter-link:hover {
+    border-color: #cbc6f4;
+    color: var(--primary);
+}
+
+.filter-link.active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.filter-link span {
+    display: grid;
+    min-width: 21px;
+    height: 21px;
+    place-items: center;
+    padding: 0 5px;
+    border-radius: 20px;
+    background: var(--surface-secondary);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+}
+
+.filter-link.active span {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.tasks-panel {
+    padding: 25px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-large);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.tasks-panel-header {
+    margin-bottom: 20px;
+}
+
+.panel-label {
+    margin: 0 0 5px;
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.tasks-panel-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.complete-task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.complete-task-item {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: var(--surface-secondary);
+    scroll-margin-top: 24px;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.complete-task-item:hover {
+    border-color: #cbc6f4;
+    background: #fbfaff;
+    transform: translateY(-1px);
+}
+
+.complete-task-item:target {
+    border-color: var(--primary);
+    background: #faf9ff;
+    box-shadow: 0 0 0 3px rgba(102, 87, 217, 0.13);
+}
+
+.complete-task-item.completed {
+    opacity: 0.7;
+}
+
+.complete-task-item.completed h3 {
+    text-decoration: line-through;
+}
+
+.category-indicator {
+    width: 5px;
+    flex: 0 0 5px;
+    background: var(--category-color);
+}
+
+.complete-task-content {
+    min-width: 0;
+    flex: 1;
+    padding: 17px 18px;
+}
+
+.complete-task-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.complete-task-title h3 {
+    min-width: 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-size: 0.98rem;
+}
+
+.priority-badge {
+    flex: 0 0 auto;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: #eceef4;
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.priority-alta {
+    background: #fff0f2;
+    color: #ae3547;
+}
+
+.priority-media {
+    background: #fff5dd;
+    color: #936514;
+}
+
+.priority-baja {
+    background: #eaf7ee;
+    color: #34754a;
+}
+
+.task-description {
+    margin: 9px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+.complete-task-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px 16px;
+    margin-top: 12px;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+}
+
+.complete-task-metadata span {
+    position: relative;
+}
+
+.complete-task-metadata span:not(:last-child)::after {
+    position: absolute;
+    top: 50%;
+    right: -9px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #b5b8c5;
+    content: "";
+    transform: translateY(-50%);
+}
+
+.tasks-empty-state {
+    display: flex;
+    min-height: 210px;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    border: 1px dashed #d6d9e5;
+    border-radius: 15px;
+    background: var(--surface-secondary);
+}
+
+.tasks-empty-state > span {
+    display: grid;
+    width: 45px;
+    height: 45px;
+    place-items: center;
+    border-radius: 14px;
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    font-size: 1.25rem;
+}
+
+.tasks-empty-state strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.tasks-empty-state p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+}
+
+@media (max-width: 760px) {
+    .tasks-header {
+        align-items: center;
+    }
+
+    .tasks-header .create-button {
+        display: none;
+    }
+
+    .tasks-panel {
+        padding: 18px;
+    }
+
+    .complete-task-title {
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .priority-badge {
+        align-self: flex-start;
+    }
+}
+
+.task-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 15px;
+    padding-top: 13px;
+    border-top: 1px solid var(--border);
+}
+
+.task-actions form {
+    margin: 0;
+}
+
+.task-action {
+    display: inline-flex;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 750;
+    text-decoration: none;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease;
+}
+
+.task-action-icon {
+    display: grid;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    place-items: center;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.edit-action {
+    border-color: #d8d3f7;
+    background: #faf9ff;
+    color: var(--primary-dark);
+}
+
+.edit-action .task-action-icon {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+}
+
+.edit-action:hover {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.delete-action {
+    border-color: #efcbd1;
+    background: #fff8f9;
+    color: #a22639;
+}
+
+.delete-action .task-action-icon {
+    background: #ffe8ec;
+    color: #a22639;
+}
+
+.delete-action:hover {
+    border-color: #d97080;
+    background: #fff0f2;
+    color: #8f1f31;
+    transform: translateY(-1px);
+}
+
+.complete-action {
+    border-color: #bcdcc6;
+    background: #f4fbf6;
+    color: #34754a;
+}
+
+.complete-action .task-action-icon {
+    background: #dff3e5;
+    color: #34754a;
+}
+
+.complete-action:hover {
+    border-color: #5c9b70;
+    background: #eaf7ee;
+    color: #28613c;
+    transform: translateY(-1px);
+}
+
+.restore-action {
+    border-color: #ead5a8;
+    background: #fffbf1;
+    color: #835b12;
+}
+
+.restore-action .task-action-icon {
+    background: #fff0c9;
+    color: #835b12;
+}
+
+.restore-action:hover {
+    border-color: #d49a32;
+    background: #fff5dd;
+    color: #704a09;
+    transform: translateY(-1px);
+}
+
+/* ============================================================
+   FASE A1 — FILTROS TÁCTILES DE TAREAS
+   ============================================================ */
+
+.task-filters {
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.task-filters::-webkit-scrollbar {
+    display: none;
+}
+
+.filter-link {
+    border-radius: 999px;
+    scroll-snap-align: start;
+}
+
+.filter-link.active {
+    box-shadow: 0 7px 17px rgba(102, 87, 217, 0.2);
+}
+
+@media (max-width: 760px) {
+    .task-filters {
+        gap: 8px;
+        margin-inline: -4px;
+        padding: 2px 4px 7px;
+    }
+
+    .filter-link {
+        min-height: 43px;
+        padding-inline: 14px;
+    }
+}
+
+/* ============================================================
+   FASE A1.1 — PULIDO VISUAL MÓVIL
+   ============================================================ */
+
+@media (max-width: 760px) {
+    .tasks-header {
+        align-items: flex-start;
+        margin-bottom: 18px;
+    }
+
+    .tasks-header h1 {
+        font-size: 2rem;
+        line-height: 1.08;
+    }
+
+    .tasks-header > div > p:last-child {
+        margin-top: 6px;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .task-filters {
+        margin-inline: -14px;
+        padding: 2px 14px 7px;
+        scroll-padding-inline: 14px;
+    }
+
+    .task-filters::after {
+        width: 20vw;
+        flex: 0 0 20vw;
+        content: "";
+    }
+
+    .tasks-panel {
+        padding: 16px;
+    }
+}

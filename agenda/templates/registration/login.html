@@ -1,0 +1,233 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="description"
+        content="Acceso privado a la agenda personal BFGenda."
+    >
+
+    <title>Iniciar sesión | BFGenda</title>
+
+    <meta name="theme-color" content="#6657d9">
+    <meta name="application-name" content="BFGenda">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"
+    >
+
+    <link
+        rel="manifest"
+        href="{% url 'pwa_manifest' %}"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="{% static 'agenda/img/branding/favicon-32x32.png' %}"
+    >
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="{% static 'agenda/img/branding/favicon-16x16.png' %}"
+    >
+    <link
+        rel="apple-touch-icon"
+        href="{% static 'agenda/img/branding/apple-touch-icon.png' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'agenda/css/login.css' %}?v=20260821-1"
+    >
+</head>
+
+<body>
+    <main class="login-page">
+        <section class="login-card">
+            <header class="login-header">
+                <div class="brand-icon" aria-hidden="true">
+                    <img
+                        src="{% static 'agenda/img/branding/bfgenda-simbolo-xl-64.png' %}"
+                        alt=""
+                    >
+                </div>
+
+                <div>
+                    <h1>BFGenda</h1>
+                    <p>Tu agenda personal</p>
+                </div>
+            </header>
+
+            <div class="login-introduction">
+                <h2>Iniciar sesión</h2>
+
+                <p>
+                    Ingresa con tu cuenta para consultar tus tareas
+                    y actividades.
+                </p>
+            </div>
+
+            {% for message in messages %}
+                <div
+                    class="form-message {% if message.tags == 'error' %}error-message{% else %}information-message{% endif %}"
+                    role="status"
+                >
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if form.errors %}
+                <div class="form-message error-message" role="alert">
+                    El usuario o la contraseña no son correctos.
+                </div>
+            {% endif %}
+
+            {% if next and user.is_authenticated %}
+                <div class="form-message error-message" role="alert">
+                    Tu cuenta no tiene permiso para abrir esta página.
+                </div>
+            {% endif %}
+
+            <form method="post" class="login-form">
+                {% csrf_token %}
+
+                <div class="form-field">
+                    <label for="{{ form.username.id_for_label }}">
+                        Usuario
+                    </label>
+
+                    <input
+                        type="text"
+                        name="{{ form.username.html_name }}"
+                        id="{{ form.username.id_for_label }}"
+                        value="{{ form.username.value|default:'' }}"
+                        autocomplete="username"
+                        required
+                        data-autofocus="true"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="{{ form.password.id_for_label }}">
+                        Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        name="{{ form.password.html_name }}"
+                        id="{{ form.password.id_for_label }}"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+
+                <button class="login-button" type="submit">
+                    Ingresar
+                </button>
+            </form>
+
+            {% if puede_detener_agende %}
+                <section
+                    class="shutdown-access"
+                    aria-labelledby="shutdown-title"
+                    data-desktop-shutdown
+                >
+                    <div>
+                        <h2 id="shutdown-title">Sesión cerrada</h2>
+                        <p>
+                            BFGenda continúa funcionando en este computador.
+                            Puedes detenerla por completo antes de cerrar la pestaña.
+                        </p>
+                    </div>
+
+                    <button
+                        class="shutdown-button"
+                        type="button"
+                        data-shutdown-open
+                    >
+                        Detener BFGenda
+                    </button>
+                </section>
+
+                <dialog
+                    id="shutdown-confirmation"
+                    class="shutdown-dialog"
+                    aria-labelledby="shutdown-confirmation-title"
+                    data-desktop-shutdown
+                >
+                    <div class="shutdown-dialog-card">
+                        <div class="shutdown-dialog-icon" aria-hidden="true">
+                            ■
+                        </div>
+
+                        <div>
+                            <p class="shutdown-dialog-eyebrow">Sistema</p>
+                            <h2 id="shutdown-confirmation-title">
+                                ¿Detener BFGenda?
+                            </h2>
+                            <p>
+                                El servidor se apagará y ningún dispositivo podrá
+                                acceder hasta que vuelvas a abrir el acceso directo
+                                BFGenda.
+                            </p>
+                        </div>
+
+                        <form
+                            method="post"
+                            action="{% url 'agenda:detener_agende' %}"
+                            class="shutdown-dialog-actions"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                class="shutdown-cancel-button"
+                                type="button"
+                                data-shutdown-close
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                class="shutdown-confirm-button"
+                                type="submit"
+                            >
+                                Sí, detener
+                            </button>
+                        </form>
+                    </div>
+                </dialog>
+            {% endif %}
+
+            <footer class="login-footer">
+                <p>Aplicación privada de uso personal.</p>
+            </footer>
+        </section>
+    </main>
+
+    <script
+        src="{% static 'agenda/js/login.js' %}?v=20260821-1"
+        defer
+    ></script>
+
+    <script
+        src="{% static 'agenda/js/pwa.js' %}?v=20260729-1"
+        defer
+    ></script>
+</body>
+</html>

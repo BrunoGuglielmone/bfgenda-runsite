@@ -1,0 +1,11 @@
+Recursos de identidad de BFGenda
+
+Archivos principales:
+- bfgenda-logo.png: logotipo horizontal para la interfaz.
+- bfgenda.ico: icono para accesos directos de Windows.
+- favicon-16x16.png y favicon-32x32.png: iconos del navegador.
+- apple-touch-icon.png: icono para iPhone/iPad.
+- bfgenda-icon-192.png y bfgenda-icon-512.png: futuros iconos PWA.
+
+Ubicación recomendada en el proyecto:
+agenda/static/agenda/img/branding/

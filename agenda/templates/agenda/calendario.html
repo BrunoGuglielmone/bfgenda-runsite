@@ -1,0 +1,126 @@
+{% extends "agenda/base.html" %}
+{% load static %}
+
+{% block title %}Calendario | BFGenda{% endblock %}
+
+{% block extra_css %}
+    <link data-page-style
+        rel="stylesheet"
+        href="{% static 'agenda/css/calendario.css' %}?v=20260821-3"
+    >
+{% endblock %}
+
+{% block content %}
+    <header class="calendar-header">
+        <div>
+            <p class="current-date">Agenda flexible</p>
+            <h1>Calendario</h1>
+            <p>Consulta tus tareas y eventos por día, semana o mes.</p>
+        </div>
+
+        <a
+            class="create-button"
+            href="{% url 'agenda:evento_crear' %}?fecha={{ dia_seleccionado|date:'Y-m-d' }}"
+            data-modal-url="{% url 'agenda:evento_crear' %}?fecha={{ dia_seleccionado|date:'Y-m-d' }}"
+            data-calendar-header-event
+            data-base-url="{% url 'agenda:evento_crear' %}"
+        >
+            <span aria-hidden="true">+</span>
+            Nuevo evento
+        </a>
+    </header>
+
+    <section class="calendar-toolbar" aria-label="Controles del calendario">
+        <nav class="calendar-view-switch" aria-label="Vista del calendario">
+            {% for vista in vistas_calendario %}
+                <a
+                    class="calendar-view-button{% if vista.value == vista_actual %} active{% endif %}"
+                    href="{{ vista.url }}"
+                    data-calendar-navigation
+                    {% if vista.value == vista_actual %}aria-current="page"{% endif %}
+                >
+                    {{ vista.label }}
+                </a>
+            {% endfor %}
+        </nav>
+
+        <div class="calendar-toolbar-actions">
+            <a
+                class="completed-history-button"
+                href="{% url 'agenda:tareas_listado' %}?filtro=completadas"
+                data-modal-url="{% url 'agenda:tareas_resumen' %}?tipo=completadas"
+                title="Ver tareas realizadas recientemente"
+            >
+                <span aria-hidden="true">✓</span>
+                Hechas
+                <strong>{{ cantidad_completadas }}</strong>
+            </a>
+        </div>
+    </section>
+
+    <div
+        id="calendar-dynamic-content"
+        data-calendar-view="{{ vista_actual }}"
+    >
+        <section class="calendar-period-panel">
+            <header class="period-navigation">
+                <a
+                    class="period-navigation-button"
+                    href="{{ url_periodo_anterior }}"
+                    data-calendar-navigation
+                    aria-label="Ir al período anterior"
+                    title="Período anterior"
+                >
+                    ←
+                </a>
+
+                <div>
+                    <h2>{{ titulo_periodo }}</h2>
+                    <a
+                        class="today-link"
+                        href="{{ url_hoy }}"
+                        data-calendar-navigation
+                    >
+                        Ir a hoy
+                    </a>
+                </div>
+
+                <a
+                    class="period-navigation-button"
+                    href="{{ url_periodo_siguiente }}"
+                    data-calendar-navigation
+                    aria-label="Ir al período siguiente"
+                    title="Período siguiente"
+                >
+                    →
+                </a>
+            </header>
+
+            {% if vista_actual == "dia" %}
+                {% include "agenda/componentes/calendario_dia.html" %}
+            {% elif vista_actual == "semana" %}
+                {% include "agenda/componentes/calendario_semana.html" %}
+            {% else %}
+                {% include "agenda/componentes/calendario_mes.html" %}
+            {% endif %}
+        </section>
+
+        {% if vista_actual == "mes" %}
+            <section
+                id="selected-day-panel"
+                class="selected-day-panel"
+                aria-live="polite"
+            >
+                {% include "agenda/componentes/calendario_panel_dia.html" with fecha_panel=dia_seleccionado elementos_panel=elementos_dia_seleccionado only %}
+            </section>
+
+            {% for semana in semanas %}
+                {% for dia in semana %}
+                    <template id="day-template-{{ dia.fecha|date:'Y-m-d' }}">
+                        {% include "agenda/componentes/calendario_panel_dia.html" with fecha_panel=dia.fecha elementos_panel=dia.elementos only %}
+                    </template>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,228 @@
+{% extends "agenda/base.html" %}
+{% load static %}
+
+{% block title %}
+    Categorías | BFGenda
+{% endblock %}
+
+{% block extra_css %}
+    <link data-page-style
+        rel="stylesheet"
+        href="{% static 'agenda/css/categorias.css' %}?v=20260801-3"
+    >
+{% endblock %}
+
+{% block content %}
+    <!-- Encabezado -->
+    <header class="categories-header">
+        <div>
+            <p class="current-date">
+                Organización
+            </p>
+
+            <h1>
+                Categorías
+            </h1>
+
+            <p>
+                Organiza tus tareas mediante nombres y colores.
+            </p>
+        </div>
+
+        <a
+            class="create-button"
+            href="{% url 'agenda:categoria_crear' %}"
+            data-modal-url="{% url 'agenda:categoria_crear' %}"
+        >
+            <span aria-hidden="true">+</span>
+            Nueva categoría
+        </a>
+    </header>
+
+    <!-- Resumen -->
+    <section
+        class="category-summary"
+        aria-label="Resumen de categorías"
+    >
+        <article>
+            <strong>
+                {{ cantidad_categorias }}
+            </strong>
+
+            <span>
+                Totales
+            </span>
+        </article>
+
+        <article>
+            <strong>
+                {{ cantidad_activas }}
+            </strong>
+
+            <span>
+                Activas
+            </span>
+        </article>
+
+        <article>
+            <strong>
+                {{ cantidad_inactivas }}
+            </strong>
+
+            <span>
+                Inactivas
+            </span>
+        </article>
+    </section>
+
+    <!-- Listado de categorías -->
+    {% if categorias %}
+        <section class="category-grid">
+            {% for categoria in categorias %}
+                <article
+                    id="categoria-{{ categoria.id }}"
+                    class="
+                        category-card
+
+                        {% if not categoria.activa %}
+                            inactive
+                        {% endif %}
+                    "
+                >
+                    <div class="category-card-header">
+                        <!--
+                            Muestra visual del color.
+
+                            Se utiliza un selector desactivado para evitar
+                            el aviso que aparecía en la línea 72.
+                        -->
+                        <input
+                            class="category-color"
+                            type="color"
+                            value="{{ categoria.color }}"
+                            disabled
+                            tabindex="-1"
+                            aria-hidden="true"
+                        >
+
+                        <span class="category-status">
+                            {% if categoria.activa %}
+                                Activa
+                            {% else %}
+                                Inactiva
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="category-card-content">
+                        <h2>
+                            {{ categoria.nombre }}
+                        </h2>
+
+                        <p>
+                            {{ categoria.cantidad_tareas }}
+
+                            {% if categoria.cantidad_tareas == 1 %}
+                                tarea
+                            {% else %}
+                                tareas
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="category-actions">
+                        <!-- Editar -->
+                        <a
+                            class="category-action edit-category"
+                            href="{% url 'agenda:categoria_editar' categoria.id %}"
+                            data-modal-url="{% url 'agenda:categoria_editar' categoria.id %}"
+                            aria-label="Editar categoría {{ categoria.nombre }}"
+                            title="Editar categoría"
+                        >
+                            <span
+                                class="category-action-icon"
+                                aria-hidden="true"
+                            >
+                                ✎
+                            </span>
+                            <span>Editar</span>
+                        </a>
+
+                        <a
+                            class="category-action delete-category"
+                            href="{% url 'agenda:categoria_eliminar' categoria.id %}"
+                            data-modal-url="{% url 'agenda:categoria_eliminar' categoria.id %}"
+                            aria-label="Eliminar categoría {{ categoria.nombre }}"
+                            title="Eliminar categoría"
+                        >
+                            <span
+                                class="category-action-icon"
+                                aria-hidden="true"
+                            >
+                                ×
+                            </span>
+                            <span>Eliminar</span>
+                        </a>
+
+                        <!-- Activar o desactivar -->
+                        <form
+                            method="post"
+                            action="{% url 'agenda:categoria_cambiar_estado' categoria.id %}"
+                            data-ajax-form
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                class="category-action toggle-category"
+                                type="submit"
+                                {% if categoria.activa %}
+                                    aria-label="Desactivar categoría {{ categoria.nombre }}"
+                                    title="Desactivar categoría"
+                                {% else %}
+                                    aria-label="Activar categoría {{ categoria.nombre }}"
+                                    title="Activar categoría"
+                                {% endif %}
+                            >
+                                <span
+                                    class="category-action-icon"
+                                    aria-hidden="true"
+                                >
+                                    {% if categoria.activa %}
+                                        −
+                                    {% else %}
+                                        +
+                                    {% endif %}
+                                </span>
+
+                                <span>
+                                    {% if categoria.activa %}
+                                        Desactivar
+                                    {% else %}
+                                        Activar
+                                    {% endif %}
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <!-- Estado vacío -->
+        <section class="categories-empty">
+            <span aria-hidden="true">
+                ●
+            </span>
+
+            <div>
+                <strong>
+                    No tienes categorías
+                </strong>
+
+                <p>
+                    Crea una categoría para comenzar a organizar tus tareas.
+                </p>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,87 @@
+<header class="modal-form-header summary-modal-header">
+    <span class="modal-form-icon" aria-hidden="true">
+        {{ resumen.icon }}
+    </span>
+
+    <div>
+        <p class="modal-form-eyebrow">Vista rápida</p>
+        <h2 id="app-modal-title">{{ resumen.title }}</h2>
+        <p>{{ resumen.description }}</p>
+    </div>
+</header>
+
+<div class="summary-modal-meta">
+    <strong>{{ cantidad_total }}</strong>
+    <span>tarea{{ cantidad_total|pluralize }}</span>
+
+    {% if resumen.key == "completadas" %}
+        <small>
+            El historial se conserva durante {{ meses_retencion }} meses.
+        </small>
+    {% endif %}
+</div>
+
+{% if tareas %}
+    <div class="summary-task-list">
+        {% for tarea in tareas %}
+            <a
+                class="summary-task-item{% if tarea.estado == 'completada' %} completed{% endif %}"
+                href="{{ tarea.summary_url }}"
+            >
+                <span
+                    class="summary-task-color"
+                    style="--task-color: {{ tarea.categoria.color|default:'#9A9EAD' }};"
+                    aria-hidden="true"
+                ></span>
+
+                <div>
+                    <strong>{{ tarea.titulo }}</strong>
+
+                    <p>
+                        {% if tarea.fecha_limite %}
+                            {{ tarea.fecha_limite|date:"d/m/Y" }}
+                        {% else %}
+                            Sin fecha
+                        {% endif %}
+
+                        {% if tarea.hora_limite %}
+                            · {{ tarea.hora_limite|time:"H:i" }}
+                        {% endif %}
+
+                        · {{ tarea.categoria.nombre|default:"Sin categoría" }}
+                        · {{ tarea.get_prioridad_display }}
+                    </p>
+
+                    {% if tarea.estado == 'completada' and tarea.completada_en %}
+                        <small>
+                            Realizada el {{ tarea.completada_en|date:"d/m/Y H:i" }}
+                        </small>
+                    {% endif %}
+                </div>
+
+                <span class="summary-task-destination">Ver en Tareas →</span>
+            </a>
+        {% endfor %}
+    </div>
+
+    {% if cantidad_oculta %}
+        <p class="summary-hidden-count">
+            Hay {{ cantidad_oculta }} tarea{{ cantidad_oculta|pluralize }} más en el listado completo.
+        </p>
+    {% endif %}
+{% else %}
+    <div class="summary-modal-empty">
+        <span aria-hidden="true">{{ resumen.icon }}</span>
+        <strong>{{ resumen.empty_message }}</strong>
+    </div>
+{% endif %}
+
+<footer class="summary-modal-footer">
+    <button class="modal-cancel-button" type="button" data-modal-close>
+        Cerrar
+    </button>
+
+    <a class="modal-save-button summary-open-list" href="{{ url_listado_completo }}">
+        Abrir listado completo
+    </a>
+</footer>

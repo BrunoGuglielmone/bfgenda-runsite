@@ -1,0 +1,375 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+        name="description"
+        content="Agenda personal para organizar actividades, eventos y tareas."
+    >
+
+    <title>{% block title %}BFGenda{% endblock %}</title>
+
+    <meta name="theme-color" content="#6657d9">
+    <meta name="application-name" content="BFGenda">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"
+    >
+
+    <link
+        rel="manifest"
+        href="{% url 'pwa_manifest' %}"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="{% static 'agenda/img/branding/favicon-32x32.png' %}"
+    >
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="{% static 'agenda/img/branding/favicon-16x16.png' %}"
+    >
+    <link
+        rel="apple-touch-icon"
+        href="{% static 'agenda/img/branding/apple-touch-icon.png' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'agenda/css/inicio.css' %}?v=20260801-3"
+    >
+    <link
+        rel="stylesheet"
+        href="{% static 'agenda/css/modal.css' %}?v=20260802-4"
+    >
+    <link
+        rel="stylesheet"
+        href="{% static 'agenda/css/category-select.css' %}?v=20260801-1"
+    >
+    <link
+        rel="stylesheet"
+        href="{% static 'agenda/css/busqueda.css' %}?v=20260727-1"
+    >
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body
+    data-reminders-url="{% url 'agenda:recordatorios_pendientes' %}"
+    data-past-events-url="{% url 'agenda:evento_pasado_pendiente' %}"
+    data-notification-icon="{% static 'agenda/img/branding/bfgenda-simbolo-xl-192.png' %}"
+>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-icon" aria-hidden="true">
+                    <img
+                        src="{% static 'agenda/img/branding/bfgenda-simbolo-xl-64.png' %}"
+                        alt=""
+                    >
+                </span>
+                <div>
+                    <strong>BFGenda</strong>
+                    <small>Agenda personal</small>
+                </div>
+            </div>
+
+            <a
+                class="global-search-trigger {% if request.resolver_match.url_name == 'busqueda' %}active{% endif %}"
+                href="{% url 'agenda:busqueda' %}"
+                data-modal-url="{% url 'agenda:busqueda' %}"
+                data-global-search-trigger
+                aria-label="Buscar tareas, eventos y categorías"
+                title="Buscar en BFGenda"
+            >
+                <span aria-hidden="true">⌕</span>
+                <span>Buscar</span>
+                <kbd>Ctrl K</kbd>
+            </a>
+
+            <nav class="sidebar-navigation" aria-label="Navegación principal">
+                <a
+                    class="navigation-link {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}"
+                    href="{% url 'agenda:inicio' %}"
+                    data-app-link>
+                    <span aria-hidden="true">⌂</span>
+                    Inicio
+                </a>
+
+                <a
+                    class="navigation-link {% if request.resolver_match.url_name == 'calendario' %}active{% endif %}"
+                    href="{% url 'agenda:calendario' %}"
+                    data-app-link>
+                    <span aria-hidden="true">▦</span>
+                    Calendario
+                </a>
+
+                <a
+                    class="navigation-link {% if request.resolver_match.url_name == 'eventos_listado' or request.resolver_match.url_name == 'evento_crear' or request.resolver_match.url_name == 'evento_editar' or request.resolver_match.url_name == 'evento_eliminar' %}active{% endif %}"
+                    href="{% url 'agenda:eventos_listado' %}"
+                    data-app-link>
+                    <span aria-hidden="true">◷</span>
+                    Eventos
+                </a>
+
+                <a
+                    class="navigation-link {% if request.resolver_match.url_name == 'tareas_listado' or request.resolver_match.url_name == 'tarea_crear' or request.resolver_match.url_name == 'tarea_editar' or request.resolver_match.url_name == 'tarea_eliminar' %}active{% endif %}"
+                    href="{% url 'agenda:tareas_listado' %}"
+                    data-app-link>
+                    <span aria-hidden="true">✓</span>
+                    Tareas
+                </a>
+
+                <a
+                    class="navigation-link {% if request.resolver_match.url_name == 'categorias_listado' or request.resolver_match.url_name == 'categoria_crear' or request.resolver_match.url_name == 'categoria_editar' or request.resolver_match.url_name == 'categoria_eliminar' %}active{% endif %}"
+                    href="{% url 'agenda:categorias_listado' %}"
+                    data-app-link>
+                    <span aria-hidden="true">●</span>
+                    Categorías
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a
+                    class="navigation-link {% if request.resolver_match.url_name == 'configuracion' or request.resolver_match.url_name == 'configuracion_editar' or request.resolver_match.url_name == 'backup_restaurar' or request.resolver_match.url_name == 'importar_ics' %}active{% endif %}"
+                    href="{% url 'agenda:configuracion' %}"
+                    data-app-link>
+                    <span aria-hidden="true">⚙</span>
+                    Configuración
+                </a>
+
+                <form method="post" action="{% url 'agenda:cerrar_sesion' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button class="navigation-link logout-button" type="submit">
+                        <span aria-hidden="true">↪</span>
+                        Cerrar sesión
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <main id="app-main-content" class="main-content">
+            {% with nombre_usuario=request.user.get_full_name|default:request.user.username %}
+                <header class="mobile-app-header">
+                    <a
+                        class="mobile-brand-link"
+                        href="{% url 'agenda:inicio' %}"
+                        aria-label="Ir al inicio de BFGenda"
+                    data-app-link>
+                        <img
+                            src="{% static 'agenda/img/branding/bfgenda-simbolo-xl-64.png' %}"
+                            alt=""
+                        >
+
+                        <span class="mobile-brand-copy">
+                            <strong>BFGenda</strong>
+                            <small>{{ nombre_usuario }}</small>
+                        </span>
+                    </a>
+
+                    <div class="mobile-header-actions">
+                        <a
+                            class="mobile-header-action"
+                            href="{% url 'agenda:busqueda' %}"
+                            data-modal-url="{% url 'agenda:busqueda' %}"
+                            data-global-search-trigger
+                            aria-label="Buscar en BFGenda"
+                            title="Buscar"
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                                focusable="false"
+                            >
+                                <circle cx="11" cy="11" r="6.5"></circle>
+                                <path d="M16 16L21 21"></path>
+                            </svg>
+                        </a>
+
+                        <details
+                            class="mobile-more-menu"
+                            data-mobile-menu
+                        >
+                            <summary
+                                class="mobile-header-action"
+                                aria-label="Abrir más opciones"
+                                title="Más opciones"
+                            >
+                                <svg
+                                    class="mobile-dots-icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <circle cx="5" cy="12" r="1.5"></circle>
+                                    <circle cx="12" cy="12" r="1.5"></circle>
+                                    <circle cx="19" cy="12" r="1.5"></circle>
+                                </svg>
+                            </summary>
+
+                            <div class="mobile-more-panel">
+                                <a
+                                    href="{% url 'agenda:categorias_listado' %}"
+                                    data-mobile-menu-link
+                        data-app-link>
+                                    Categorías
+                                </a>
+
+                                <a
+                                    href="{% url 'agenda:configuracion' %}"
+                                    data-mobile-menu-link
+                        data-app-link>
+                                    Ajustes
+                                </a>
+                            </div>
+                        </details>
+
+                        <form
+                            method="post"
+                            action="{% url 'agenda:cerrar_sesion' %}"
+                            class="mobile-logout-form"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                class="mobile-header-action mobile-logout-button"
+                                type="submit"
+                                aria-label="Cerrar sesión"
+                                title="Cerrar sesión"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <path d="M10 5H5V19H10"></path>
+                                    <path d="M14 8L18 12L14 16"></path>
+                                    <path d="M18 12H9"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </header>
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <nav class="mobile-navigation" aria-label="Navegación móvil">
+            <a
+                class="mobile-link {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}"
+                href="{% url 'agenda:inicio' %}"
+                    data-app-link>
+                <span aria-hidden="true">⌂</span>
+                Inicio
+            </a>
+
+            <a
+                class="mobile-link {% if request.resolver_match.url_name == 'calendario' %}active{% endif %}"
+                href="{% url 'agenda:calendario' %}"
+                    data-app-link>
+                <span aria-hidden="true">▦</span>
+                Calendario
+            </a>
+
+            <details
+                class="mobile-quick-create"
+                data-mobile-menu
+            >
+                <summary
+                    class="mobile-create-button"
+                    aria-label="Crear una tarea o un evento"
+                    title="Crear"
+                >
+                    +
+                </summary>
+
+                <div class="mobile-quick-create-panel">
+                    <a
+                        {% if request.resolver_match.url_name == 'calendario' and dia_seleccionado %}
+                            href="{% url 'agenda:tarea_crear' %}?fecha={{ dia_seleccionado|date:'Y-m-d' }}"
+                            data-modal-url="{% url 'agenda:tarea_crear' %}?fecha={{ dia_seleccionado|date:'Y-m-d' }}"
+                        {% else %}
+                            href="{% url 'agenda:tarea_crear' %}"
+                            data-modal-url="{% url 'agenda:tarea_crear' %}"
+                        {% endif %}
+                        data-mobile-menu-link
+                        data-app-link>
+                        <span aria-hidden="true">✓</span>
+                        Nueva tarea
+                    </a>
+
+                    <a
+                        {% if request.resolver_match.url_name == 'calendario' and dia_seleccionado %}
+                            href="{% url 'agenda:evento_crear' %}?fecha={{ dia_seleccionado|date:'Y-m-d' }}"
+                            data-modal-url="{% url 'agenda:evento_crear' %}?fecha={{ dia_seleccionado|date:'Y-m-d' }}"
+                        {% else %}
+                            href="{% url 'agenda:evento_crear' %}"
+                            data-modal-url="{% url 'agenda:evento_crear' %}"
+                        {% endif %}
+                        data-mobile-menu-link
+                        data-app-link>
+                        <span aria-hidden="true">▣</span>
+                        Nuevo evento
+                    </a>
+                </div>
+            </details>
+
+            <a
+                class="mobile-link {% if request.resolver_match.url_name == 'tareas_listado' or request.resolver_match.url_name == 'tarea_crear' or request.resolver_match.url_name == 'tarea_editar' or request.resolver_match.url_name == 'tarea_eliminar' %}active{% endif %}"
+                href="{% url 'agenda:tareas_listado' %}"
+                    data-app-link>
+                <span aria-hidden="true">✓</span>
+                Tareas
+            </a>
+
+            <a
+                class="mobile-link {% if request.resolver_match.url_name == 'eventos_listado' or request.resolver_match.url_name == 'evento_crear' or request.resolver_match.url_name == 'evento_editar' or request.resolver_match.url_name == 'evento_eliminar' %}active{% endif %}"
+                href="{% url 'agenda:eventos_listado' %}"
+                    data-app-link>
+                <span aria-hidden="true">▣</span>
+                Eventos
+            </a>
+        </nav>
+    </div>
+
+    <dialog id="app-modal" class="app-modal" aria-labelledby="app-modal-title">
+        <div class="app-modal-shell">
+            <button
+                class="app-modal-close"
+                type="button"
+                data-modal-close
+                aria-label="Cerrar ventana"
+                title="Cerrar"
+            >
+                ×
+            </button>
+            <div id="app-modal-content" class="app-modal-content"></div>
+        </div>
+    </dialog>
+
+    <div id="app-toast" class="app-toast" role="status" aria-live="polite"></div>
+
+    <script src="{% static 'agenda/js/app.js' %}?v=20260802-2" defer></script>
+    <script src="{% static 'agenda/js/category-select.js' %}?v=20260801-1" defer></script>
+    <script src="{% static 'agenda/js/busqueda.js' %}?v=20260727-1" defer></script>
+    <script src="{% static 'agenda/js/calendario.js' %}?v=20260821-1" defer></script>
+    {% block extra_js %}{% endblock %}
+
+    <script
+        src="{% static 'agenda/js/notificaciones.js' %}?v=20260826-1"
+        defer
+    ></script>
+    <script
+        src="{% static 'agenda/js/pwa.js' %}?v=20260729-1"
+        defer
+    ></script>
+</body>
+</html>

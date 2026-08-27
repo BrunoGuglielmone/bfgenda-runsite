@@ -1,0 +1,303 @@
+:root {
+    --background: #f4f6fb;
+    --surface: #ffffff;
+    --primary: #6657d9;
+    --primary-dark: #5144ba;
+    --primary-soft: #eeebff;
+    --text: #202333;
+    --text-secondary: #6f7485;
+    --border: #dfe2ec;
+    --danger: #a83243;
+    --danger-soft: #fff0f2;
+    --shadow: 0 20px 60px rgba(35, 39, 66, 0.11);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    background:
+        radial-gradient(circle at top left, rgba(102, 87, 217, 0.12), transparent 32%),
+        var(--background);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.form-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    padding: 32px 20px;
+}
+
+.form-card {
+    width: min(100%, 760px);
+    padding: 34px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.back-link {
+    display: inline-flex;
+    margin-bottom: 26px;
+    color: var(--primary);
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.brand-icon {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border-radius: 14px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.brand strong,
+.brand small {
+    display: block;
+}
+
+.brand small {
+    margin-top: 2px;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+}
+
+.form-eyebrow {
+    margin: 0 0 6px;
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.form-header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.form-header > p:last-child {
+    margin: 9px 0 27px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+.agende-form {
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.form-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-field > label:not(.checkbox-field) {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.form-control {
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    outline: none;
+    background: #ffffff;
+    color: var(--text);
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+textarea.form-control {
+    min-height: 105px;
+    resize: vertical;
+}
+
+.form-control:focus,
+.color-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-soft);
+}
+
+.color-control {
+    width: 100%;
+    min-height: 48px;
+    padding: 5px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.checkbox-field {
+    display: flex;
+    min-height: 52px;
+    align-items: center;
+    gap: 12px;
+    padding: 0 15px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #f8f9fc;
+    cursor: pointer;
+}
+
+.checkbox-field input {
+    width: 19px;
+    height: 19px;
+    accent-color: var(--primary);
+}
+
+.checkbox-field span {
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.field-help {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+.field-error {
+    color: var(--danger);
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+.form-errors {
+    padding: 13px 15px;
+    border: 1px solid #efc1c8;
+    border-radius: 12px;
+    background: var(--danger-soft);
+    color: var(--danger);
+    font-size: 0.85rem;
+}
+
+.form-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 8px;
+}
+
+.cancel-button,
+.save-button {
+    display: inline-flex;
+    min-height: 47px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.cancel-button {
+    border: 1px solid var(--border);
+    background: #ffffff;
+}
+
+.cancel-button:hover {
+    background: #f7f8fb;
+}
+
+.save-button {
+    border: 0;
+    background: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(102, 87, 217, 0.23);
+}
+
+.save-button:hover {
+    background: var(--primary-dark);
+}
+
+@media (max-width: 620px) {
+    .form-page {
+        display: block;
+        padding: 0;
+    }
+
+    .form-card {
+        min-height: 100vh;
+        padding: 26px 20px;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-button,
+    .save-button {
+        width: 100%;
+    }
+}
+
+/* Identidad visual de BFGenda */
+.brand-icon {
+    overflow: hidden;
+    padding: 0;
+}
+
+.brand-icon img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+}

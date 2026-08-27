@@ -1,0 +1,88 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Formulario de BFGenda.">
+    <title>{{ form_config.title }} | BFGenda</title>
+    <link rel="stylesheet" href="{% static 'agenda/css/formulario.css' %}?v=20260726-1">
+    <link rel="stylesheet" href="{% static 'agenda/css/category-select.css' %}?v=20260801-1">
+</head>
+<body>
+    <main class="form-page">
+        <section class="form-card">
+            <a class="back-link" href="{{ form_config.cancel_url }}">← Volver</a>
+
+            <div class="brand">
+                <span class="brand-icon" aria-hidden="true">B</span>
+                <div>
+                    <strong>BFGenda</strong>
+                    <small>Agenda personal</small>
+                </div>
+            </div>
+
+            <header class="form-header">
+                <p class="form-eyebrow">{{ form_config.eyebrow }}</p>
+                <h1>{{ form_config.title }}</h1>
+                <p>{{ form_config.description }}</p>
+            </header>
+
+            <form
+                method="post"
+                action="{{ form_action }}"
+                class="agende-form"
+                {% if form_is_multipart %}enctype="multipart/form-data"{% endif %}
+                novalidate
+            >
+                {% csrf_token %}
+
+                {% for hidden in form_config.hidden_fields %}
+                    <input type="hidden" name="{{ hidden.name }}" value="{{ hidden.value }}">
+                {% endfor %}
+
+                {% include "agenda/componentes/formulario_campos.html" %}
+
+                <div class="form-actions">
+                    <a class="cancel-button" href="{{ form_config.cancel_url }}">Cancelar</a>
+                    <button class="save-button" type="submit">{{ form_config.submit_label }}</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            "use strict";
+
+            const focusDesktopForm = () => {
+                const finePointer = window.matchMedia(
+                    "(hover: hover) and (pointer: fine)"
+                ).matches;
+
+                if (!finePointer || window.innerWidth <= 760) {
+                    return;
+                }
+
+                const firstField = document.querySelector("[data-autofocus]");
+
+                if (firstField instanceof HTMLElement) {
+                    firstField.focus({preventScroll: true});
+                }
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener(
+                    "DOMContentLoaded",
+                    focusDesktopForm,
+                    {once: true}
+                );
+            } else {
+                focusDesktopForm();
+            }
+        })();
+    </script>
+    <script src="{% static 'agenda/js/category-select.js' %}?v=20260801-1" defer></script>
+</body>
+</html>

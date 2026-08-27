@@ -1,0 +1,11 @@
+{% extends "agenda/base.html" %}
+
+{% block title %}
+    {{ confirmation.eyebrow }} | BFGenda
+{% endblock %}
+
+{% block content %}
+    <section class="confirmation-page-card">
+        {% include "agenda/componentes/confirmacion_contenido.html" %}
+    </section>
+{% endblock %}

@@ -1,0 +1,41 @@
+/* ============================================================
+   FASE A2.2 — VISTA PREVIA DEL SELECTOR DE CATEGORÍAS
+   ============================================================ */
+
+.category-select-shell {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    --category-select-color: #9a9ead;
+}
+
+.category-select-shell .form-control {
+    padding-left: 40px;
+}
+
+.category-select-dot {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 14px;
+    width: 12px;
+    height: 12px;
+    border: 1px solid rgba(32, 35, 51, 0.12);
+    border-radius: 50%;
+    background: var(--category-select-color);
+    box-shadow: 0 0 0 3px rgba(32, 35, 51, 0.035);
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.category-select-shell:focus-within .category-select-dot {
+    box-shadow: 0 0 0 4px rgba(102, 87, 217, 0.12);
+    transform: translateY(-50%) scale(1.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .category-select-dot {
+        transition: none;
+    }
+}

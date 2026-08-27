@@ -1,0 +1,45 @@
+<div class="calendar-scroll" data-scroll-key="calendar-month">
+    <div class="month-calendar" role="grid" aria-label="{{ titulo_periodo }}">
+        <div class="weekday" role="columnheader">Lun</div>
+        <div class="weekday" role="columnheader">Mar</div>
+        <div class="weekday" role="columnheader">Mié</div>
+        <div class="weekday" role="columnheader">Jue</div>
+        <div class="weekday" role="columnheader">Vie</div>
+        <div class="weekday" role="columnheader">Sáb</div>
+        <div class="weekday" role="columnheader">Dom</div>
+
+        {% for semana in semanas %}
+            {% for dia in semana %}
+                <article
+                    class="calendar-day{% if not dia.es_mes_actual %} outside-month{% endif %}{% if dia.es_hoy %} today{% endif %}{% if dia.seleccionado %} selected{% endif %}"
+                    role="gridcell"
+                    aria-selected="{% if dia.seleccionado %}true{% else %}false{% endif %}"
+                    data-calendar-day
+                    data-date="{{ dia.fecha|date:'Y-m-d' }}"
+                    data-template-id="day-template-{{ dia.fecha|date:'Y-m-d' }}"
+                    {% if dia.modal_url %}data-day-modal-url="{{ dia.modal_url }}"{% endif %}
+                >
+                    <a
+                        class="calendar-day-number"
+                        href="{{ dia.url_mes }}"
+                        aria-label="Ver agenda del {{ dia.fecha|date:'d/m/Y' }}"
+                    >
+                        {{ dia.fecha|date:"j" }}
+                    </a>
+
+                    <div class="calendar-day-items">
+                        {% for elemento in dia.elementos|slice:":3" %}
+                            {% include "agenda/componentes/calendario_item_mini.html" with elemento=elemento only %}
+                        {% endfor %}
+
+                        {% if dia.cantidad_extra %}
+                            <button class="more-items" type="button">
+                                +{{ dia.cantidad_extra }} más
+                            </button>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>

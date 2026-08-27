@@ -1,0 +1,25 @@
+<header class="selected-day-header">
+    <div>
+        <p class="panel-label">Día seleccionado</p>
+        <h2>{{ fecha_panel|date:"l, j F Y"|capfirst }}</h2>
+    </div>
+
+    {% include "agenda/componentes/calendario_acciones_dia.html" with fecha_accion=fecha_panel only %}
+</header>
+
+{% if elementos_panel %}
+    <div class="selected-day-list">
+        {% for elemento in elementos_panel %}
+            {% include "agenda/componentes/calendario_item_detalle.html" with elemento=elemento only %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="calendar-empty-state">
+        <span aria-hidden="true">▦</span>
+
+        <div>
+            <strong>No hay actividades para este día</strong>
+            <p>Puedes crear una tarea o un evento.</p>
+        </div>
+    </div>
+{% endif %}

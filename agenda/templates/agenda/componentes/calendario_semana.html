@@ -1,0 +1,38 @@
+<div class="week-calendar-scroll" data-scroll-key="calendar-week">
+    <div class="week-calendar" aria-label="{{ titulo_periodo }}">
+        {% for dia in dias_semana %}
+            <article class="week-day{% if dia.es_hoy %} today{% endif %}{% if dia.seleccionado %} selected{% endif %}">
+                <header class="week-day-header">
+                    <a
+                        href="{{ dia.url_dia }}"
+                        data-calendar-navigation
+                        aria-label="Abrir el día {{ dia.fecha|date:'d/m/Y' }}"
+                    >
+                        <span>{{ dia.fecha|date:"D" }}</span>
+                        <strong>{{ dia.fecha|date:"j" }}</strong>
+                    </a>
+
+                    <span class="week-day-count">{{ dia.elementos|length }}</span>
+                </header>
+
+                <div class="week-day-items">
+                    {% for elemento in dia.elementos_visibles %}
+                        {% include "agenda/componentes/calendario_item_mini.html" with elemento=elemento only %}
+                    {% empty %}
+                        <p class="week-day-empty">Sin actividades</p>
+                    {% endfor %}
+                </div>
+
+                {% if dia.cantidad_extra %}
+                    <a
+                        class="week-day-more"
+                        href="{{ dia.url_dia }}"
+                        data-modal-url="{{ dia.modal_url }}"
+                    >
+                        Ver {{ dia.cantidad_extra }} más
+                    </a>
+                {% endif %}
+            </article>
+        {% endfor %}
+    </div>
+</div>

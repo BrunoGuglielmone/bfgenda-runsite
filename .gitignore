@@ -1,0 +1,27 @@
+# Entorno virtual
+.venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+
+# Base de datos local y datos privados
+db.sqlite3
+*.sqlite3
+
+# Variables y secretos
+.env
+.env.*
+!.env.example
+
+# Visual Studio Code
+.vscode/
+
+# Archivos generados durante la ejecución
+staticfiles/
+media/
+logs/
+runtime/
+
+# Copias privadas generadas por BFGenda
+backups/

@@ -1,0 +1,63 @@
+<header class="confirmation-header">
+    <span class="confirmation-icon" aria-hidden="true">
+        {{ confirmation.icon }}
+    </span>
+
+    <div>
+        <p class="confirmation-eyebrow">
+            {{ confirmation.eyebrow }}
+        </p>
+        <h2{% if confirmation_modal %} id="app-modal-title"{% endif %}>
+            {{ confirmation.title }}
+        </h2>
+        <p>
+            {{ confirmation.description }}
+        </p>
+    </div>
+</header>
+
+{% if confirmation.details %}
+    <ul class="confirmation-details">
+        {% for detail in confirmation.details %}
+            <li>{{ detail }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<div class="confirmation-warning" role="note">
+    <strong>Atención</strong>
+    <span>{{ confirmation.warning }}</span>
+</div>
+
+<form
+    method="post"
+    action="{{ confirmation.action_url }}"
+    class="confirmation-form js-ajax-form"
+>
+    {% csrf_token %}
+
+    {% for hidden in confirmation.hidden_fields %}
+        <input
+            type="hidden"
+            name="{{ hidden.name }}"
+            value="{{ hidden.value }}"
+        >
+    {% endfor %}
+
+    <div class="modal-actions confirmation-actions">
+        <a
+            class="modal-cancel-button"
+            href="{{ confirmation.cancel_url }}"
+            data-modal-close
+        >
+            Cancelar
+        </a>
+
+        <button
+            class="modal-danger-button"
+            type="submit"
+        >
+            {{ confirmation.confirm_label }}
+        </button>
+    </div>
+</form>

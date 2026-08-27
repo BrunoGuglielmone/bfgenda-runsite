@@ -1,0 +1,423 @@
+.events-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 26px;
+}
+
+.events-header h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 3vw, 2.45rem);
+}
+
+.events-header > div > p:last-child {
+    margin: 9px 0 0;
+    color: var(--text-secondary);
+}
+
+.event-filters {
+    display: flex;
+    gap: 9px;
+    margin-bottom: 22px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+}
+
+.event-filter {
+    display: inline-flex;
+    min-height: 40px;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    padding: 0 13px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.event-filter:hover {
+    border-color: #cbc6f4;
+    color: var(--primary);
+}
+
+.event-filter.active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.event-filter span {
+    display: grid;
+    min-width: 21px;
+    height: 21px;
+    place-items: center;
+    padding: 0 5px;
+    border-radius: 20px;
+    background: var(--surface-secondary);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+}
+
+.event-filter.active span {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.events-panel {
+    padding: 25px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-large);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.events-panel-header {
+    margin-bottom: 20px;
+}
+
+.events-panel-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.event-list-item {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: var(--surface-secondary);
+    scroll-margin-top: 24px;
+    transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.event-list-item:hover {
+    border-color: #cbc6f4;
+    background: #fbfaff;
+    transform: translateY(-1px);
+}
+
+.event-list-item:target {
+    border-color: var(--primary);
+    background: #faf9ff;
+    box-shadow: 0 0 0 3px rgba(102, 87, 217, 0.13);
+}
+
+.event-list-item.completed,
+.event-list-item.cancelled {
+    opacity: 0.68;
+}
+
+.event-list-color {
+    width: 5px;
+    flex: 0 0 5px;
+    background: var(--event-color);
+}
+
+.event-list-date {
+    display: flex;
+    width: 82px;
+    flex: 0 0 82px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+}
+
+.event-list-date strong {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.event-list-date span {
+    margin-top: 5px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.event-list-date small {
+    margin-top: 3px;
+    color: var(--text-secondary);
+}
+
+.event-list-content {
+    min-width: 0;
+    flex: 1;
+    padding: 17px 18px;
+}
+
+.event-list-title h3 {
+    margin: 0 0 8px;
+    overflow-wrap: anywhere;
+    font-size: 0.98rem;
+}
+
+.event-status {
+    display: inline-flex;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.status-programado { background: var(--primary-soft); color: var(--primary-dark); }
+.status-realizado { background: #eaf7ee; color: #34754a; }
+.status-cancelado { background: #fff0f2; color: #a83243; }
+
+.event-list-description {
+    margin: 11px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+.event-list-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px 16px;
+    margin-top: 12px;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+}
+
+.event-list-actions {
+    display: flex;
+    margin-top: 15px;
+    padding-top: 13px;
+    border-top: 1px solid var(--border);
+}
+
+.event-list-action {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: #ffffff;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-weight: 750;
+}
+
+.edit-event-action:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.events-empty-state {
+    display: flex;
+    min-height: 210px;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    border: 1px dashed #d6d9e5;
+    border-radius: 15px;
+    background: var(--surface-secondary);
+}
+
+.events-empty-state > span {
+    display: grid;
+    width: 45px;
+    height: 45px;
+    place-items: center;
+    border-radius: 14px;
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+}
+
+.events-empty-state p {
+    margin: 5px 0 0;
+    color: var(--text-secondary);
+}
+
+@media (max-width: 760px) {
+    .events-header .create-button { display: none; }
+    .events-panel { padding: 18px; }
+    .event-list-item { flex-direction: column; }
+    .event-list-color { width: 100%; height: 4px; flex: 0 0 4px; }
+    .event-list-date {
+        width: 100%;
+        flex: auto;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 7px;
+        padding: 10px 15px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .event-list-date strong { font-size: 1.1rem; }
+    .event-list-date span,
+    .event-list-date small { margin: 0; }
+}
+
+.event-list-actions {
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.delete-event-action:hover {
+    border-color: #d97080;
+    background: #fff0f2;
+    color: #a22639;
+}
+
+/* Acciones modernas de eventos */
+.event-list-action {
+    min-height: 38px;
+    gap: 7px;
+    padding: 0 14px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.78rem;
+    transition:
+        border-color 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.event-action-icon {
+    display: grid;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    place-items: center;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.edit-event-action {
+    border-color: #d8d3f7;
+    background: #faf9ff;
+    color: var(--primary-dark);
+}
+
+.edit-event-action .event-action-icon {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+}
+
+.edit-event-action:hover {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.delete-event-action {
+    border-color: #efcbd1;
+    background: #fff8f9;
+    color: #a22639;
+}
+
+.delete-event-action .event-action-icon {
+    background: #ffe8ec;
+    color: #a22639;
+}
+
+.delete-event-action:hover {
+    border-color: #d97080;
+    background: #fff0f2;
+    color: #8f1f31;
+    transform: translateY(-1px);
+}
+
+.status-pasado {
+    background: #eef0f5;
+    color: #5d6372;
+}
+
+.event-list-actions form {
+    margin: 0;
+}
+
+.cancel-event-action {
+    border-color: #ead5a8;
+    background: #fffbf1;
+    color: #835b12;
+}
+
+.cancel-event-action .event-action-icon {
+    background: #fff0c9;
+    color: #835b12;
+}
+
+.cancel-event-action:hover {
+    border-color: #d49a32;
+    background: #fff5dd;
+    color: #704a09;
+    transform: translateY(-1px);
+}
+
+.restore-event-action {
+    border-color: #bcdcc6;
+    background: #f4fbf6;
+    color: #34754a;
+}
+
+.restore-event-action .event-action-icon {
+    background: #dff3e5;
+    color: #34754a;
+}
+
+.restore-event-action:hover {
+    border-color: #5c9b70;
+    background: #eaf7ee;
+    color: #28613c;
+    transform: translateY(-1px);
+}
+
+/* ============================================================
+   FASE A1 — FILTROS TÁCTILES DE EVENTOS
+   ============================================================ */
+
+.event-filters {
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.event-filters::-webkit-scrollbar {
+    display: none;
+}
+
+.event-filter {
+    border-radius: 999px;
+    scroll-snap-align: start;
+}
+
+.event-filter.active {
+    box-shadow: 0 7px 17px rgba(102, 87, 217, 0.2);
+}
+
+@media (max-width: 760px) {
+    .event-filters {
+        gap: 8px;
+        margin-inline: -4px;
+        padding: 2px 4px 7px;
+    }
+
+    .event-filter {
+        min-height: 43px;
+        padding-inline: 14px;
+    }
+}

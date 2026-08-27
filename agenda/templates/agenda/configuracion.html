@@ -1,0 +1,451 @@
+{% extends "agenda/base.html" %}
+{% load static %}
+
+{% block title %}Configuración | BFGenda{% endblock %}
+
+{% block extra_css %}
+    <link data-page-style
+        rel="stylesheet"
+        href="{% static 'agenda/css/configuracion.css' %}?v=20260728-1"
+    >
+{% endblock %}
+
+{% block content %}
+    <header class="settings-header">
+        <div>
+            <p class="current-date">Preferencias personales</p>
+            <h1>Configuración</h1>
+            <p>
+                Ajusta el funcionamiento de BFGenda y protege tus datos personales.
+            </p>
+        </div>
+
+        <a
+            class="create-button"
+            href="{% url 'agenda:configuracion_editar' %}"
+            data-modal-url="{% url 'agenda:configuracion_editar' %}"
+        >
+            <span aria-hidden="true">⚙</span>
+            Editar preferencias
+        </a>
+    </header>
+
+    <section class="settings-grid" aria-label="Preferencias actuales">
+        <article class="settings-card">
+            <span class="settings-card-icon" aria-hidden="true">▦</span>
+
+            <div class="settings-card-content">
+                <p class="settings-card-label">Calendario</p>
+                <h2>{{ preferencias.get_vista_calendario_display }}</h2>
+                <p>
+                    Esta será la vista inicial cuando abras Calendario sin haber
+                    seleccionado Día, Semana o Mes.
+                </p>
+            </div>
+        </article>
+
+        <article class="settings-card">
+            <span class="settings-card-icon" aria-hidden="true">◷</span>
+
+            <div class="settings-card-content">
+                <p class="settings-card-label">Eventos nuevos</p>
+                <h2>
+                    {{ preferencias.hora_inicio_evento|time:"H:i" }} ·
+                    {{ preferencias.get_duracion_evento_minutos_display }}
+                </h2>
+                <p>
+                    Los formularios de eventos completarán inicialmente estos
+                    valores, pero seguirán siendo editables antes de guardar.
+                </p>
+            </div>
+        </article>
+
+        <article class="settings-card">
+            <span class="settings-card-icon" aria-hidden="true">⌛</span>
+
+            <div class="settings-card-content">
+                <p class="settings-card-label">Tareas sin fecha</p>
+
+                {% if preferencias.avisos_sin_fecha_activos %}
+                    <h2>
+                        Aviso activo ·
+                        {{ preferencias.get_dias_aviso_sin_fecha_display|lower }}
+                    </h2>
+                    <p>
+                        Inicio mostrará como máximo un recordatorio por día
+                        cuando existan tareas sin fecha con esa antigüedad.
+                    </p>
+                {% else %}
+                    <h2>Aviso desactivado</h2>
+                    <p>
+                        Las tareas continuarán en la Bandeja de tareas, pero no
+                        se abrirá automáticamente el recordatorio diario.
+                    </p>
+                {% endif %}
+            </div>
+        </article>
+
+        <article class="settings-card settings-card-reminders">
+            <span class="settings-card-icon" aria-hidden="true">
+                &#128276;
+            </span>
+
+            <div class="settings-card-content">
+                <p class="settings-card-label">
+                    Recordatorios automáticos
+                </p>
+
+                <h2>Configuración de avisos</h2>
+
+                <div
+                    class="reminder-summary-grid"
+                    aria-label="Resumen de recordatorios"
+                >
+                    <div class="reminder-summary-item">
+                        <span>Tareas</span>
+                        <strong>
+                            {% if preferencias.recordatorios_tareas_activos %}
+                                Activos
+                            {% else %}
+                                Desactivados
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="reminder-summary-item">
+                        <span>Eventos</span>
+                        <strong>
+                            {% if preferencias.recordatorios_eventos_activos %}
+                                Activos
+                            {% else %}
+                                Desactivados
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="reminder-summary-item">
+                        <span>Anticipación de tareas</span>
+                        <strong>
+                            {{ preferencias.get_anticipacion_recordatorios_minutos_display }}
+                        </strong>
+                    </div>
+
+                    <div class="reminder-summary-item">
+                        <span>Anticipación de eventos</span>
+                        <strong>
+                            {{ preferencias.get_anticipacion_eventos_minutos_display }}
+                        </strong>
+                    </div>
+
+                    <div class="reminder-summary-item">
+                        <span>Elementos sin hora</span>
+                        <strong>
+                            {{ preferencias.hora_recordatorios_sin_hora|time:"H:i" }}
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="settings-card settings-card-information">
+            <span class="settings-card-icon" aria-hidden="true">✓</span>
+
+            <div class="settings-card-content">
+                <p class="settings-card-label">Historial de tareas</p>
+                <h2>{{ meses_retencion_completadas }} meses</h2>
+                <p>
+                    Las tareas completadas se conservan durante este período y
+                    después se eliminan automáticamente para evitar un crecimiento
+                    indefinido de la base de datos.
+                </p>
+            </div>
+        </article>
+    </section>
+
+    <section class="settings-note" role="note">
+        <span aria-hidden="true">i</span>
+        <div>
+            <strong>Configuración privada</strong>
+            <p>
+                Estas preferencias pertenecen únicamente a tu usuario y se
+                aplican tanto desde la computadora como desde el celular.
+            </p>
+        </div>
+    </section>
+
+    <section
+        class="notification-settings"
+        aria-labelledby="notification-settings-title"
+        data-notification-panel
+        data-push-server-enabled="{{ push_server_enabled|yesno:'true,false' }}"
+        data-push-public-key="{{ push_public_key }}"
+        data-push-subscribe-url="{% url 'agenda:suscripcion_push_guardar' %}"
+        data-push-unsubscribe-url="{% url 'agenda:suscripcion_push_eliminar' %}"
+        data-push-test-url="{% url 'agenda:suscripcion_push_probar' %}"
+    >
+        <div class="notification-settings-icon" aria-hidden="true">
+            &#128276;
+        </div>
+
+        <div class="notification-settings-content">
+            <p class="settings-section-label">
+                Avisos del dispositivo
+            </p>
+
+            <h2 id="notification-settings-title">
+                Notificaciones de BFGenda
+            </h2>
+
+            <p>
+                Permite que BFGenda envíe recordatorios a este dispositivo
+                aunque la aplicación esté cerrada. La activación se gestiona
+                por separado en cada computadora, navegador o celular.
+            </p>
+
+            <div
+                class="notification-status"
+                data-notification-status
+                role="status"
+                aria-live="polite"
+            >
+                Comprobando disponibilidad...
+            </div>
+        </div>
+
+        <div class="notification-settings-actions">
+            <button
+                class="notification-primary-button"
+                type="button"
+                data-notification-enable
+                hidden
+            >
+                Activar notificaciones
+            </button>
+
+            <button
+                class="notification-secondary-button"
+                type="button"
+                data-notification-test
+                hidden
+            >
+                Enviar prueba
+            </button>
+
+            <button
+                class="notification-secondary-button"
+                type="button"
+                data-notification-disable
+                hidden
+            >
+                Desactivar en este dispositivo
+            </button>
+        </div>
+    </section>
+
+    <section class="data-management-section" aria-labelledby="data-management-title">
+        <header class="data-management-header">
+            <div>
+                <p class="settings-section-label">Seguridad de la información</p>
+                <h2 id="data-management-title">Datos y copias de seguridad</h2>
+                <p>
+                    Protege toda la base de BFGenda y descarga copias portables para
+                    conservarlas fuera del computador.
+                </p>
+            </div>
+
+            <form
+                method="post"
+                action="{% url 'agenda:backup_crear' %}"
+                data-ajax-form
+            >
+                {% csrf_token %}
+                <input
+                    type="hidden"
+                    name="return_url"
+                    value="{% url 'agenda:configuracion' %}"
+                >
+                <button class="backup-primary-button" type="submit">
+                    <span aria-hidden="true">＋</span>
+                    Crear copia ahora
+                </button>
+            </form>
+        </header>
+
+        <div class="data-summary-grid">
+            <article class="data-summary-card">
+                <span aria-hidden="true">↻</span>
+                <div>
+                    <p>Copias automáticas</p>
+                    <strong>{{ cantidad_copias_automaticas }}</strong>
+                    <small>
+                        BFGenda conserva las {{ limite_copias_automaticas }} más recientes.
+                    </small>
+                </div>
+            </article>
+
+            <article class="data-summary-card">
+                <span aria-hidden="true">▣</span>
+                <div>
+                    <p>Copias manuales</p>
+                    <strong>{{ cantidad_copias_manuales }}</strong>
+                    <small>No se eliminan mediante la limpieza automática.</small>
+                </div>
+            </article>
+
+            <article class="data-summary-card data-summary-card-wide">
+                <span aria-hidden="true">◷</span>
+                <div>
+                    <p>Última copia disponible</p>
+                    {% if ultima_copia %}
+                        <strong>{{ ultima_copia.created_at|date:"d/m/Y H:i" }}</strong>
+                        <small>
+                            {{ ultima_copia.kind_label }} · {{ ultima_copia.size_label }}
+                        </small>
+                    {% else %}
+                        <strong>Todavía no hay copias</strong>
+                        <small>Utiliza “Crear copia ahora” para generar la primera.</small>
+                    {% endif %}
+                </div>
+            </article>
+        </div>
+
+        <div class="export-panel">
+            <div>
+                <p class="settings-section-label">Exportación portable</p>
+                <h3>Descargar tus datos</h3>
+                <p>
+                    JSON conserva la estructura completa para consulta técnica. El ZIP
+                    incluye CSV separados para tareas, eventos, categorías y preferencias.
+                </p>
+            </div>
+
+            <div class="export-actions">
+                <a
+                    class="data-secondary-button"
+                    href="{% url 'agenda:exportar_json' %}"
+                >
+                    Descargar JSON
+                </a>
+                <a
+                    class="data-secondary-button"
+                    href="{% url 'agenda:exportar_csv' %}"
+                >
+                    Descargar CSV
+                </a>
+            </div>
+        </div>
+
+        <div class="calendar-transfer-panel">
+            <span class="calendar-transfer-icon" aria-hidden="true">⇄</span>
+
+            <div class="calendar-transfer-content">
+                <p class="settings-section-label">Compatibilidad de calendarios</p>
+                <h3>Importar y exportar eventos iCalendar</h3>
+                <p>
+                    Descarga todos tus eventos en un archivo .ics compatible con
+                    calendarios habituales o incorpora eventos desde otro servicio.
+                    Los duplicados se omiten automáticamente.
+                </p>
+                <small>
+                    Por seguridad, las reglas recurrentes del archivo se omiten hasta
+                    que BFGenda pueda administrarlas como una serie completa.
+                </small>
+            </div>
+
+            <div class="calendar-transfer-actions">
+                <a
+                    class="data-secondary-button"
+                    href="{% url 'agenda:exportar_ics' %}"
+                >
+                    Descargar .ics
+                </a>
+                <a
+                    class="calendar-import-button"
+                    href="{% url 'agenda:importar_ics' %}"
+                    data-modal-url="{% url 'agenda:importar_ics' %}"
+                >
+                    Importar .ics
+                </a>
+            </div>
+        </div>
+
+        <div class="backup-list-panel">
+            <header class="backup-list-header">
+                <div>
+                    <p class="settings-section-label">Restauración</p>
+                    <h3>Copias disponibles</h3>
+                </div>
+                <span>{{ copias|length }} archivo{{ copias|length|pluralize }}</span>
+            </header>
+
+            {% if copias %}
+                <div class="backup-list">
+                    {% for copia in copias %}
+                        <article class="backup-item">
+                            <span
+                                class="backup-kind-icon kind-{{ copia.kind }}"
+                                aria-hidden="true"
+                            >
+                                {% if copia.kind == "automatic" %}
+                                    ↻
+                                {% elif copia.kind == "pre-restore" %}
+                                    ↶
+                                {% else %}
+                                    ▣
+                                {% endif %}
+                            </span>
+
+                            <div class="backup-item-content">
+                                <div class="backup-item-title">
+                                    <strong>{{ copia.kind_label }}</strong>
+                                    <span>{{ copia.size_label }}</span>
+                                </div>
+                                <p>{{ copia.created_at|date:"l, d F Y · H:i" }}</p>
+                                <code>{{ copia.name }}</code>
+                            </div>
+
+                            <div class="backup-item-actions">
+                                <a
+                                    class="backup-action-button"
+                                    href="{% url 'agenda:backup_descargar' copia.name %}"
+                                >
+                                    Descargar
+                                </a>
+                                <a
+                                    class="backup-action-button restore"
+                                    href="{% url 'agenda:backup_restaurar' copia.name %}"
+                                    data-modal-url="{% url 'agenda:backup_restaurar' copia.name %}"
+                                >
+                                    Restaurar
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="backup-empty-state">
+                    <span aria-hidden="true">▣</span>
+                    <div>
+                        <strong>No hay copias para mostrar</strong>
+                        <p>
+                            La primera copia automática se crea al utilizar BFGenda y
+                            también puedes generar una manual desde esta pantalla.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="restore-warning" role="note">
+            <span aria-hidden="true">!</span>
+            <div>
+                <strong>Restaurar reemplaza todos los datos actuales</strong>
+                <p>
+                    Antes de hacerlo, BFGenda crea otra copia preventiva. Al finalizar
+                    tendrás que iniciar sesión nuevamente para evitar utilizar una sesión
+                    que no corresponda con la base restaurada.
+                </p>
+            </div>
+        </div>
+    </section>
+{% endblock %}

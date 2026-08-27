@@ -1,0 +1,98 @@
+<section
+    class="past-event-notice"
+    aria-labelledby="past-event-title"
+>
+    <div class="past-event-notice-icon" aria-hidden="true">
+        ◷
+    </div>
+
+    <div class="past-event-notice-heading">
+        <p>Evento finalizado</p>
+
+        <h2 id="past-event-title">
+            {{ evento.titulo }}
+        </h2>
+
+        <p>
+            Este evento ya terminó y ahora se encuentra
+            automáticamente dentro de Pasados.
+        </p>
+    </div>
+
+    <div class="past-event-notice-details">
+        {% if evento.todo_el_dia %}
+            <span>
+                Fecha:
+                {{ inicio_local|date:"d/m/Y" }}
+            </span>
+        {% else %}
+            <span>
+                Inicio:
+                {{ inicio_local|date:"d/m/Y H:i" }}
+            </span>
+
+            <span>
+                Finalización:
+                {{ fin_local|date:"d/m/Y H:i" }}
+            </span>
+        {% endif %}
+
+        {% if evento.ubicacion %}
+            <span>
+                Ubicación: {{ evento.ubicacion }}
+            </span>
+        {% endif %}
+    </div>
+
+    <div class="past-event-notice-message">
+        <strong>¿Qué deseas hacer?</strong>
+
+        <p>
+            Puedes conservarlo como pasado, marcarlo como
+            cancelado o eliminarlo definitivamente.
+        </p>
+    </div>
+
+    <div class="past-event-notice-actions">
+        <button
+            class="past-event-keep-button"
+            type="button"
+            data-modal-close
+        >
+            Mantener en Pasados
+        </button>
+
+        <form
+            method="post"
+            action="{% url 'agenda:evento_cancelar' evento.id %}"
+            data-ajax-form
+        >
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="return_url"
+                value="{{ return_url }}"
+            >
+
+            <button
+                class="past-event-cancel-button"
+                type="submit"
+            >
+                Cancelar evento
+            </button>
+        </form>
+
+        <a
+            class="past-event-delete-button"
+            href="{% url 'agenda:evento_eliminar' evento.id %}?return_url={{ return_url|urlencode }}"
+            data-modal-url="{% url 'agenda:evento_eliminar' evento.id %}?return_url={{ return_url|urlencode }}"
+        >
+            Eliminar evento
+        </a>
+    </div>
+
+    <p class="past-event-notice-warning">
+        Eliminar es una acción definitiva y no puede deshacerse.
+    </p>
+</section>

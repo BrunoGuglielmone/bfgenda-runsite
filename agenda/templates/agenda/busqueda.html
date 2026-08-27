@@ -1,0 +1,62 @@
+{% extends "agenda/base.html" %}
+{% load static %}
+
+{% block title %}Buscar | BFGenda{% endblock %}
+
+{% block content %}
+    <div
+        class="global-search-page global-search-shell"
+        data-search-shell
+        data-search-endpoint="{{ url_busqueda }}"
+        data-search-mode="page"
+    >
+        <header class="search-page-header">
+            <div>
+                <p class="current-date">Búsqueda global</p>
+                <h1>Buscar en BFGenda</h1>
+                <p>Localiza tareas, eventos y categorías sin recorrer cada apartado.</p>
+            </div>
+        </header>
+
+        <form
+            class="global-search-form page-search-form"
+            method="get"
+            action="{{ url_busqueda }}"
+            data-live-search-form
+            role="search"
+        >
+            <label class="search-input-wrapper">
+                <span aria-hidden="true">⌕</span>
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ consulta }}"
+                    placeholder="Ejemplo: reunión, planificación o trabajo"
+                    autocomplete="off"
+                    maxlength="120"
+                    autofocus
+                    data-global-search-input
+                    aria-label="Buscar en BFGenda"
+                >
+            </label>
+
+            <input type="hidden" name="tipo" value="{{ tipo_busqueda }}" data-search-type-input>
+            <button class="search-submit-button" type="submit">Buscar</button>
+        </form>
+
+        <div class="search-type-filters" aria-label="Filtrar resultados por tipo">
+            {% for valor, etiqueta in tipos_busqueda %}
+                <button
+                    class="search-type-filter{% if tipo_busqueda == valor %} active{% endif %}"
+                    type="button"
+                    data-search-type="{{ valor }}"
+                    aria-pressed="{% if tipo_busqueda == valor %}true{% else %}false{% endif %}"
+                >
+                    {{ etiqueta }}
+                </button>
+            {% endfor %}
+        </div>
+
+        {% include "agenda/componentes/resultados_busqueda.html" %}
+    </div>
+{% endblock %}

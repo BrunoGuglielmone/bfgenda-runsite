@@ -1,0 +1,79 @@
+<header class="modal-form-header summary-modal-header">
+    <span class="modal-form-icon" aria-hidden="true">
+        {{ modal_config.icon }}
+    </span>
+
+    <div>
+        <p class="modal-form-eyebrow">{{ modal_config.eyebrow }}</p>
+        <h2 id="app-modal-title">{{ modal_config.title }}</h2>
+        <p>{{ modal_config.description }}</p>
+    </div>
+</header>
+
+<div class="summary-modal-meta">
+    <strong>{{ cantidad_total }}</strong>
+    <span>elemento{{ cantidad_total|pluralize }}</span>
+
+    {% if modal_config.footer_note %}
+        <small>{{ modal_config.footer_note }}</small>
+    {% endif %}
+</div>
+
+{% if elementos %}
+    <div class="summary-task-list">
+        {% for elemento in elementos %}
+            <a
+                class="summary-task-item{% if elemento.completado %} completed{% endif %}"
+                href="{{ elemento.url }}"
+            >
+                <span
+                    class="summary-task-color"
+                    style="--task-color: {{ elemento.color }};"
+                    aria-hidden="true"
+                ></span>
+
+                <div>
+                    <div class="summary-read-title">
+                        <strong>{{ elemento.titulo }}</strong>
+                        <span class="summary-read-type {{ elemento.tipo_clase }}">
+                            {{ elemento.tipo }}
+                        </span>
+                    </div>
+
+                    <p>{{ elemento.meta }}</p>
+
+                    {% if elemento.secundario %}
+                        <small>{{ elemento.secundario }}</small>
+                    {% endif %}
+                </div>
+
+                <span class="summary-task-destination">
+                    {{ elemento.destino }}
+                </span>
+            </a>
+        {% endfor %}
+    </div>
+
+    {% if cantidad_oculta %}
+        <p class="summary-hidden-count">
+            Hay {{ cantidad_oculta }} elemento{{ cantidad_oculta|pluralize }} más en el listado completo.
+        </p>
+    {% endif %}
+{% else %}
+    <div class="summary-modal-empty">
+        <span aria-hidden="true">{{ modal_config.icon }}</span>
+        <strong>{{ modal_config.empty_message }}</strong>
+    </div>
+{% endif %}
+
+<footer class="summary-modal-footer">
+    <button class="modal-cancel-button" type="button" data-modal-close>
+        Cerrar
+    </button>
+
+    {% for accion in acciones %}
+        <a class="modal-save-button summary-open-list" href="{{ accion.url }}">
+            {{ accion.label }}
+        </a>
+    {% endfor %}
+</footer>
