@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from .database import database_config
 from .env import (
     env_bool,
     env_int,
@@ -103,15 +104,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Base de datos
 # -----------------------------------------------------------------------------
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": Path(
-            os.getenv("AGENDE_DATABASE_PATH")
-            or BASE_DIR / "db.sqlite3"
-        ),
-    }
-}
+DATABASES = {"default": database_config(BASE_DIR)}
 
 
 # -----------------------------------------------------------------------------
@@ -196,7 +189,10 @@ AGENDE_BACKUP_DIR = Path(
     os.getenv("AGENDE_BACKUP_DIR")
     or BASE_DIR / "backups"
 )
-AGENDE_AUTOMATIC_BACKUPS = True
+AGENDE_AUTOMATIC_BACKUPS = env_bool(
+    "AGENDE_AUTOMATIC_BACKUPS",
+    DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3",
+)
 AGENDE_AUTO_BACKUP_LIMIT = 30
 
 # El apagado desde el navegador solo se habilita temporalmente después de

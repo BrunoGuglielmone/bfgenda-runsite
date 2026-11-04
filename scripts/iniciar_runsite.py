@@ -1,4 +1,4 @@
-"""Aplica las migraciones y arranca BFGenda en Runsite."""
+"""Aplica las migraciones y arranca BFGenda en un host administrado."""
 
 from __future__ import annotations
 
@@ -22,12 +22,13 @@ from django.core.management import call_command  # noqa: E402
 
 
 def prepare_storage() -> None:
-    """Crea las rutas configuradas antes de abrir SQLite o los registros."""
+    """Crea las rutas locales necesarias antes de iniciar el servidor."""
 
-    Path(settings.DATABASES["default"]["NAME"]).parent.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
+    if settings.DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
+        Path(settings.DATABASES["default"]["NAME"]).parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
     settings.AGENDE_BACKUP_DIR.mkdir(parents=True, exist_ok=True)
     settings.LOG_DIR.mkdir(parents=True, exist_ok=True)
 

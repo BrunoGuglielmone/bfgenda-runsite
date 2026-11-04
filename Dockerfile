@@ -30,4 +30,4 @@ RUN AGENDE_DEBUG=0 python manage.py collectstatic --noinput
 
 EXPOSE 8080
 
-CMD ["python", "scripts/iniciar_runsite_con_litestream.py"]
+CMD ["python", "scripts/iniciar_host.py"]

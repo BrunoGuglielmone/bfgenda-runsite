@@ -174,9 +174,13 @@ def dispatch_due_push_notifications(*, now=None, user=None) -> DispatchResult:
 
         for reminder in reminders:
             with transaction.atomic():
-                delivery, _ = EntregaNotificacion.objects.get_or_create(
-                    suscripcion=subscription,
-                    etiqueta=reminder["tag"],
+                delivery, _ = (
+                    EntregaNotificacion.objects
+                    .select_for_update()
+                    .get_or_create(
+                        suscripcion=subscription,
+                        etiqueta=reminder["tag"],
+                    )
                 )
 
                 if (
