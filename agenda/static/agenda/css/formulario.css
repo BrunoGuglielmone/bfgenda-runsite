@@ -1,17 +1,3 @@
-:root {
-    --background: #f4f6fb;
-    --surface: #ffffff;
-    --primary: #6657d9;
-    --primary-dark: #5144ba;
-    --primary-soft: #eeebff;
-    --text: #202333;
-    --text-secondary: #6f7485;
-    --border: #dfe2ec;
-    --danger: #a83243;
-    --danger-soft: #fff0f2;
-    --shadow: 0 20px 60px rgba(35, 39, 66, 0.11);
-}
-
 * {
     box-sizing: border-box;
 }
@@ -147,7 +133,7 @@ a {
     border: 1px solid var(--border);
     border-radius: 12px;
     outline: none;
-    background: #ffffff;
+    background: var(--input-background);
     color: var(--text);
     transition: border-color 160ms ease, box-shadow 160ms ease;
 }
@@ -169,7 +155,7 @@ textarea.form-control {
     padding: 5px;
     border: 1px solid var(--border);
     border-radius: 12px;
-    background: #ffffff;
+    background: var(--input-background);
     cursor: pointer;
 }
 
@@ -242,7 +228,7 @@ textarea.form-control {
 
 .cancel-button {
     border: 1px solid var(--border);
-    background: #ffffff;
+    background: var(--surface);
 }
 
 .cancel-button:hover {

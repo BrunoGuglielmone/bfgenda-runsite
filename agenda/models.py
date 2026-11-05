@@ -9,6 +9,11 @@ from django.utils import timezone
 class PreferenciasUsuario(models.Model):
     """Preferencias personales que modifican el comportamiento de BFGenda."""
 
+    class TemaInterfaz(models.TextChoices):
+        SISTEMA = "sistema", "Automático (según el sistema)"
+        CLARO = "claro", "Claro"
+        OSCURO = "oscuro", "Oscuro"
+
     class VistaCalendario(models.TextChoices):
         DIA = "dia", "Día"
         SEMANA = "semana", "Semana"
@@ -45,6 +50,13 @@ class PreferenciasUsuario(models.Model):
         on_delete=models.CASCADE,
         related_name="preferencias_agenda",
         verbose_name="usuario",
+    )
+
+    tema_interfaz = models.CharField(
+        max_length=10,
+        choices=TemaInterfaz.choices,
+        default=TemaInterfaz.SISTEMA,
+        verbose_name="tema de la interfaz",
     )
 
     vista_calendario = models.CharField(

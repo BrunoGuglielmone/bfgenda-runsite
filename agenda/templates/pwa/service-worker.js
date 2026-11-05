@@ -1,11 +1,13 @@
 {% load static %}
 "use strict";
 
-const CACHE_VERSION = "bfgenda-public-v3";
+const CACHE_VERSION = "bfgenda-public-v4";
 const OFFLINE_URL = "/sin-conexion/";
 
 const PUBLIC_ASSETS = [
     OFFLINE_URL,
+    "{% static 'agenda/css/theme.css' %}",
+    "{% static 'agenda/js/theme.js' %}",
     "{% static 'agenda/img/branding/bfgenda-simbolo-xl-192.png' %}",
     "{% static 'agenda/img/branding/bfgenda-simbolo-xl-512.png' %}"
 ];

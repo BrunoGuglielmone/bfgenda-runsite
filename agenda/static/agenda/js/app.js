@@ -158,6 +158,22 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function synchronizeThemePreference(parsedDocument) {
+        const preference = (
+            parsedDocument.documentElement.dataset.themePreference
+            || "sistema"
+        );
+
+        document.documentElement.dataset.themePreference = preference;
+
+        if (window.BFGendaTheme?.applyPreference) {
+            window.BFGendaTheme.applyPreference(
+                preference,
+                {persist: true}
+            );
+        }
+    }
+
     async function refreshMain(
         rawUrl = window.location.href,
         {preserveScroll = true} = {}
@@ -197,6 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             await synchronizePageStyles(parsed);
+            synchronizeThemePreference(parsed);
             currentMain.replaceWith(newMain);
             synchronizeApplicationShell(parsed);
 

@@ -88,7 +88,7 @@
     padding: 3px;
     border: 1px solid var(--border);
     border-radius: 13px;
-    background: #ffffff;
+    background: var(--input-background);
     cursor: default;
     opacity: 1;
 }
@@ -155,7 +155,7 @@
     padding: 0 13px;
     border: 1px solid var(--border);
     border-radius: 9px;
-    background: #ffffff;
+    background: var(--surface);
     color: var(--text-secondary);
     cursor: pointer;
     font-size: 0.76rem;
@@ -227,7 +227,7 @@
     padding: 4px;
     border: 1px solid var(--border);
     border-radius: 11px;
-    background: #ffffff;
+    background: var(--input-background);
     cursor: pointer;
 }
 

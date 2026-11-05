@@ -24,8 +24,8 @@ def _preferences_form_config(*, cancel_url: str) -> FormViewConfig:
         eyebrow="Configuración",
         title="Editar preferencias",
         description=(
-            "Ajusta cómo se abre el calendario, los valores iniciales de los "
-            "eventos y los avisos de tareas sin fecha."
+            "Elige la apariencia y ajusta cómo se abre el calendario, los "
+            "valores iniciales de los eventos y sus recordatorios."
         ),
         icon="⚙",
         submit_label="Guardar preferencias",

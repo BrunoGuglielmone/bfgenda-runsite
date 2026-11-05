@@ -28,8 +28,8 @@ def manifest(request):
         "scope": "/",
         "display": "standalone",
         "orientation": "any",
-        "background_color": "#171526",
-        "theme_color": "#6657d9",
+        "background_color": "#F7F5FC",
+        "theme_color": "#4E2FB0",
         "categories": [
             "productivity",
             "utilities",

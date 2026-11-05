@@ -1,7 +1,11 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="es">
+<html
+    lang="es"
+    data-theme-preference="{{ tema_interfaz_preferencia|default:'sistema' }}"
+    data-theme-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}"
+>
 <head>
     <meta charset="UTF-8">
 
@@ -17,7 +21,8 @@
 
     <title>Iniciar sesión | BFGenda</title>
 
-    <meta name="theme-color" content="#6657d9">
+    <meta name="theme-color" content="#E7DFF7">
+    <meta name="color-scheme" content="light dark">
     <meta name="application-name" content="BFGenda">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta
@@ -46,6 +51,12 @@
         rel="apple-touch-icon"
         href="{% static 'agenda/img/branding/apple-touch-icon.png' %}"
     >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'agenda/css/theme.css' %}?v=20261105-1"
+    >
+    <script src="{% static 'agenda/js/theme.js' %}?v=20261105-1"></script>
 
     <link
         rel="stylesheet"

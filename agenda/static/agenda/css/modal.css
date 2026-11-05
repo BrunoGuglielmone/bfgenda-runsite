@@ -26,8 +26,8 @@
     overscroll-behavior: contain;
     border: 1px solid rgba(215, 217, 230, 0.9);
     border-radius: 22px;
-    background: rgba(255, 255, 255, 0.97);
-    box-shadow: 0 24px 70px rgba(24, 22, 48, 0.24), 0 4px 18px rgba(24, 22, 48, 0.1);
+    background: var(--surface-glass-strong);
+    box-shadow: var(--shadow-elevated);
 }
 
 /* ============================================================
@@ -95,7 +95,7 @@
     padding: 0;
     border: 1px solid var(--border);
     border-radius: 12px;
-    background: #ffffff;
+    background: var(--surface);
     color: var(--text-secondary);
     font-family: inherit;
     font-size: 1.35rem;
@@ -208,7 +208,7 @@
     border: 1px solid var(--border);
     border-radius: 11px;
     outline: none;
-    background: #ffffff;
+    background: var(--input-background);
     color: var(--text);
     font: inherit;
     font-size: 0.86rem;
@@ -233,7 +233,7 @@
     padding: 5px;
     border: 1px solid var(--border);
     border-radius: 11px;
-    background: #ffffff;
+    background: var(--input-background);
     cursor: pointer;
 }
 
@@ -308,7 +308,7 @@
 
 .modal-cancel-button {
     border: 1px solid var(--border);
-    background: #ffffff;
+    background: var(--surface);
     color: var(--text);
 }
 
@@ -367,7 +367,7 @@
     padding: 13px 16px;
     border: 1px solid rgba(102, 87, 217, 0.25);
     border-radius: 13px;
-    background: #ffffff;
+    background: var(--surface);
     color: var(--text);
     box-shadow: 0 16px 40px rgba(24, 22, 48, 0.18);
     font-size: 0.82rem;
@@ -504,7 +504,7 @@
         margin: 2px -14px -14px;
         padding: 10px 14px 14px;
         border-top: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.97);
+        background: var(--surface-glass-strong);
     }
 
     .modal-cancel-button,
@@ -735,7 +735,7 @@
         margin: 4px -17px -18px;
         padding: 13px 17px 18px;
         border-top: 1px solid var(--border);
-        background: rgba(255, 255, 255, 0.97);
+        background: var(--surface-glass-strong);
     }
 
     .summary-modal-footer > * {

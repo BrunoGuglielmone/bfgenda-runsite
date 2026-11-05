@@ -994,6 +994,10 @@ class AgendaViewsTests(TestCase):
             preferences.vista_calendario,
             PreferenciasUsuario.VistaCalendario.MES,
         )
+        self.assertEqual(
+            preferences.tema_interfaz,
+            PreferenciasUsuario.TemaInterfaz.SISTEMA,
+        )
         self.assertEqual(preferences.duracion_evento_minutos, 60)
         self.assertTrue(preferences.avisos_sin_fecha_activos)
         self.assertTrue(preferences.recordatorios_tareas_activos)
@@ -1050,6 +1054,10 @@ class AgendaViewsTests(TestCase):
         html = response.json()["html"]
 
         self.assertIn(
+            'name="tema_interfaz"',
+            html,
+        )
+        self.assertIn(
             'name="recordatorios_tareas_activos"',
             html,
         )
@@ -1074,6 +1082,7 @@ class AgendaViewsTests(TestCase):
         response = self.client.post(
             reverse("agenda:configuracion_editar"),
             {
+                "tema_interfaz": PreferenciasUsuario.TemaInterfaz.OSCURO,
                 "vista_calendario": PreferenciasUsuario.VistaCalendario.SEMANA,
                 "hora_inicio_evento": "14:30",
                 "duracion_evento_minutos": "90",
@@ -1091,6 +1100,10 @@ class AgendaViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json()["ok"])
         preferences = PreferenciasUsuario.objects.get(usuario=self.user)
+        self.assertEqual(
+            preferences.tema_interfaz,
+            PreferenciasUsuario.TemaInterfaz.OSCURO,
+        )
         self.assertEqual(
             preferences.vista_calendario,
             PreferenciasUsuario.VistaCalendario.SEMANA,
@@ -2243,3 +2256,71 @@ class VisualPhaseA2Tests(TestCase):
             'style="--metadata-category-color: #9A9EAD;"',
         )
         self.assertContains(response, "Sin categoría")
+
+    def test_authenticated_pages_load_the_saved_interface_theme(self):
+        preferences = PreferenciasUsuario.objects.create(
+            usuario=self.user,
+            tema_interfaz=PreferenciasUsuario.TemaInterfaz.OSCURO,
+        )
+
+        response = self.client.get(reverse("agenda:inicio"))
+        html = response.content.decode()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.context["tema_interfaz_preferencia"],
+            preferences.tema_interfaz,
+        )
+        self.assertIn('data-theme-preference="oscuro"', html)
+        self.assertIn('data-theme-authenticated="true"', html)
+        self.assertIn("agenda/css/theme", html)
+        self.assertIn("?v=20261105-1", html)
+        self.assertIn("agenda/js/theme", html)
+
+    def test_theme_assets_define_both_requested_palettes(self):
+        from pathlib import Path
+
+        static_root = Path(__file__).resolve().parent / "static" / "agenda"
+        css = (static_root / "css" / "theme.css").read_text(encoding="utf-8")
+        script = (static_root / "js" / "theme.js").read_text(encoding="utf-8")
+
+        for color in (
+            "#e7dff7",
+            "#c6b4ee",
+            "#a48ae0",
+            "#7b5fd1",
+            "#4e2fb0",
+            "#05060e",
+            "#12163a",
+            "#2e1a63",
+            "#5b2a86",
+            "#b14aed",
+        ):
+            self.assertIn(color, css)
+
+        self.assertIn('html[data-theme="dark"]', css)
+        self.assertIn("prefers-color-scheme: dark", script)
+        self.assertIn("bfgenda-theme-preference", script)
+        self.assertIn("BFGendaTheme", script)
+
+    def test_login_and_offline_shell_load_theme_assets(self):
+        self.client.logout()
+
+        login_response = self.client.get(reverse("login"))
+        offline_response = self.client.get(reverse("pwa_offline"))
+
+        self.assertContains(login_response, 'data-theme-authenticated="false"')
+        self.assertContains(login_response, "agenda/css/theme")
+        self.assertContains(login_response, "agenda/js/theme")
+        self.assertContains(offline_response, "agenda/css/theme")
+        self.assertContains(offline_response, "agenda/js/theme")
+        self.assertNotContains(offline_response, "Tailscale")
+
+    def test_service_worker_precaches_theme_foundation(self):
+        response = self.client.get(reverse("pwa_service_worker"))
+        source = response.content.decode()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('CACHE_VERSION = "bfgenda-public-v4"', source)
+        self.assertIn("agenda/css/theme", source)
+        self.assertIn("agenda/js/theme", source)

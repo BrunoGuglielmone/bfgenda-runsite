@@ -97,6 +97,7 @@ class EntregaNotificacionAdmin(admin.ModelAdmin):
 class PreferenciasUsuarioAdmin(admin.ModelAdmin):
     list_display = (
         "usuario",
+        "tema_interfaz",
         "vista_calendario",
         "hora_inicio_evento",
         "duracion_evento_minutos",

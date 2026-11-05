@@ -476,6 +476,7 @@ class PreferenciasUsuarioForm(forms.ModelForm):
     """Formulario reutilizable para las preferencias personales de BFGenda."""
 
     layout = (
+        ("tema_interfaz",),
         ("vista_calendario",),
         ("hora_inicio_evento", "duracion_evento_minutos"),
         ("avisos_sin_fecha_activos",),
@@ -494,6 +495,7 @@ class PreferenciasUsuarioForm(forms.ModelForm):
     class Meta:
         model = PreferenciasUsuario
         fields = (
+            "tema_interfaz",
             "vista_calendario",
             "hora_inicio_evento",
             "duracion_evento_minutos",
@@ -506,6 +508,7 @@ class PreferenciasUsuarioForm(forms.ModelForm):
             "hora_recordatorios_sin_hora",
         )
         labels = {
+            "tema_interfaz": "Apariencia",
             "vista_calendario": "Vista inicial del calendario",
             "hora_inicio_evento": "Hora inicial para eventos nuevos",
             "duracion_evento_minutos": "Duración inicial del evento",
@@ -524,6 +527,9 @@ class PreferenciasUsuarioForm(forms.ModelForm):
             ),
         }
         help_texts = {
+            "tema_interfaz": (
+                "Automático adapta BFGenda al modo claro u oscuro del dispositivo."
+            ),
             "vista_calendario": (
                 "Se utilizará cuando abras Calendario sin elegir una vista concreta."
             ),
@@ -556,6 +562,7 @@ class PreferenciasUsuarioForm(forms.ModelForm):
             ),
         }
         widgets = {
+            "tema_interfaz": forms.Select(attrs={"class": FORM_CONTROL}),
             "vista_calendario": forms.Select(attrs={"class": FORM_CONTROL}),
             "hora_inicio_evento": forms.TimeInput(
                 format="%H:%M",

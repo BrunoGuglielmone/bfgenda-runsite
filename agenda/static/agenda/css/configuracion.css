@@ -128,9 +128,9 @@
     gap: 13px;
     margin-top: 20px;
     padding: 18px 20px;
-    border: 1px solid #d8d3f7;
+    border: 1px solid var(--info-border);
     border-radius: 15px;
-    background: #f8f6ff;
+    background: var(--info-background);
 }
 
 .settings-note > span,
@@ -291,9 +291,9 @@
     gap: 24px;
     margin-top: 20px;
     padding: 20px;
-    border: 1px solid #d8d3f7;
+    border: 1px solid var(--info-border);
     border-radius: 16px;
-    background: #f8f6ff;
+    background: var(--info-background);
 }
 
 .export-actions {
@@ -305,7 +305,7 @@
 
 .data-secondary-button {
     border: 1px solid var(--border);
-    background: #ffffff;
+    background: var(--surface);
     color: var(--text);
 }
 
@@ -346,7 +346,7 @@
     padding: 15px 16px;
     border: 1px solid var(--border);
     border-radius: 14px;
-    background: #ffffff;
+    background: var(--surface);
 }
 
 .backup-kind-icon {
@@ -420,7 +420,7 @@
     min-height: 36px;
     padding-inline: 12px;
     border: 1px solid var(--border);
-    background: #ffffff;
+    background: var(--surface);
     color: var(--text);
     font-size: 0.73rem;
 }
@@ -467,9 +467,9 @@
     gap: 13px;
     margin-top: 20px;
     padding: 17px 18px;
-    border: 1px solid #efcfb8;
+    border: 1px solid var(--warning-border);
     border-radius: 15px;
-    background: #fff8f2;
+    background: var(--warning-background);
 }
 
 .restore-warning > span {
@@ -484,9 +484,9 @@
     gap: 16px;
     margin-top: 20px;
     padding: 20px;
-    border: 1px solid #cde6d7;
+    border: 1px solid var(--success-border);
     border-radius: 16px;
-    background: #f4fbf7;
+    background: var(--success-background);
 }
 
 .automation-health-icon {
@@ -551,9 +551,9 @@
     gap: 15px;
     margin-top: 20px;
     padding: 20px;
-    border: 1px solid #cde6d7;
+    border: 1px solid var(--success-border);
     border-radius: 16px;
-    background: #f4fbf7;
+    background: var(--success-background);
 }
 
 .managed-backup-panel > span {
@@ -711,9 +711,9 @@
     gap: 16px;
     margin-top: 20px;
     padding: 20px;
-    border: 1px solid #cde6d7;
+    border: 1px solid var(--success-border);
     border-radius: 16px;
-    background: #f4fbf7;
+    background: var(--success-background);
 }
 
 .calendar-transfer-icon {
@@ -821,9 +821,9 @@
     gap: 18px;
     margin-top: 28px;
     padding: clamp(20px, 3vw, 28px);
-    border: 1px solid #d8d3f7;
+    border: 1px solid var(--info-border);
     border-radius: var(--radius-large);
-    background: #f8f6ff;
+    background: var(--info-background);
     box-shadow: var(--shadow);
 }
 
@@ -921,7 +921,7 @@
 
 .notification-secondary-button {
     border: 1px solid var(--border);
-    background: #ffffff;
+    background: var(--surface);
     color: var(--text);
 }
 

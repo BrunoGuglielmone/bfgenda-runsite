@@ -1,0 +1,296 @@
+:root {
+    color-scheme: light;
+    --palette-light-100: #e7dff7;
+    --palette-light-300: #c6b4ee;
+    --palette-light-500: #a48ae0;
+    --palette-light-700: #7b5fd1;
+    --palette-light-900: #4e2fb0;
+    --palette-dark-950: #05060e;
+    --palette-dark-900: #12163a;
+    --palette-dark-700: #2e1a63;
+    --palette-dark-500: #5b2a86;
+    --palette-dark-300: #b14aed;
+
+    --background: #f7f5fc;
+    --surface: #ffffff;
+    --surface-secondary: #f0ebf8;
+    --surface-elevated: #ffffff;
+    --surface-glass: rgba(255, 255, 255, 0.96);
+    --surface-glass-strong: rgba(255, 255, 255, 0.98);
+    --input-background: #ffffff;
+    --primary: #4e2fb0;
+    --primary-dark: #3d218f;
+    --primary-soft: #e7dff7;
+    --primary-muted: #c6b4ee;
+    --text: #211b33;
+    --text-secondary: #675f78;
+    --border: #ded6ea;
+    --border-strong: #c6b4ee;
+    --danger: #b42336;
+    --danger-soft: #fff0f2;
+    --danger-background: #fff0f2;
+    --danger-border: #efcbd1;
+    --danger-text: #9d2d3d;
+    --success-background: #eaf7ee;
+    --success-border: #bcdcc6;
+    --success-text: #28613c;
+    --warning-background: #fff5dd;
+    --warning-border: #ead5a8;
+    --warning-text: #704a09;
+    --info-background: #f0ebf8;
+    --info-border: #c6b4ee;
+    --info-text: #4e2fb0;
+    --shadow: 0 10px 30px rgba(46, 26, 99, 0.09);
+    --shadow-elevated: 0 24px 70px rgba(46, 26, 99, 0.2);
+    --overlay: rgba(28, 18, 55, 0.4);
+    --sidebar-width: 240px;
+    --radius-large: 20px;
+    --radius-medium: 14px;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --background: #05060e;
+    --surface: #12163a;
+    --surface-secondary: #191743;
+    --surface-elevated: #1c174b;
+    --surface-glass: rgba(18, 22, 58, 0.96);
+    --surface-glass-strong: rgba(18, 22, 58, 0.985);
+    --input-background: #0d102b;
+    --primary: #b14aed;
+    --primary-dark: #cf8af5;
+    --primary-soft: #2e1a63;
+    --primary-muted: #5b2a86;
+    --text: #f6f1ff;
+    --text-secondary: #c9bfdf;
+    --border: #37315f;
+    --border-strong: #5b2a86;
+    --danger: #ff8b9c;
+    --danger-soft: #371727;
+    --danger-background: #371727;
+    --danger-border: #713246;
+    --danger-text: #ffabb8;
+    --success-background: #132e2b;
+    --success-border: #28584a;
+    --success-text: #91e2b2;
+    --warning-background: #352715;
+    --warning-border: #705226;
+    --warning-text: #f3cb7c;
+    --info-background: #21194d;
+    --info-border: #5b2a86;
+    --info-text: #d9b3ff;
+    --shadow: 0 12px 34px rgba(0, 0, 0, 0.34);
+    --shadow-elevated: 0 26px 76px rgba(0, 0, 0, 0.56);
+    --overlay: rgba(2, 2, 8, 0.7);
+}
+
+html,
+body {
+    background: var(--background);
+}
+
+body,
+button,
+input,
+select,
+textarea,
+dialog {
+    color: var(--text);
+}
+
+input,
+select,
+textarea {
+    color-scheme: inherit;
+}
+
+html[data-theme="dark"] :is(input, select, textarea) {
+    border-color: var(--border);
+    background: var(--input-background);
+    color: var(--text);
+}
+
+html[data-theme="dark"] :is(input, textarea)::placeholder {
+    color: #8f87aa;
+}
+
+html[data-theme="dark"] body {
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(177, 74, 237, 0.16),
+            transparent 34%
+        ),
+        var(--background);
+}
+
+html[data-theme="dark"] :is(
+    .sidebar,
+    .dashboard-card,
+    .tasks-panel,
+    .events-panel,
+    .category-summary article,
+    .category-card,
+    .calendar-period-panel,
+    .selected-day-panel,
+    .settings-card,
+    .data-management-section,
+    .backup-item,
+    .global-search-page .global-search-results,
+    .app-modal-shell,
+    .login-card,
+    .form-card,
+    .mobile-more-panel,
+    .mobile-quick-create-panel,
+    .repeat-create-options
+) {
+    border-color: var(--border);
+    background: var(--surface);
+    color: var(--text);
+}
+
+html[data-theme="dark"] :is(
+    .mobile-app-header,
+    .mobile-navigation
+) {
+    border-color: var(--border);
+    background: var(--surface-glass);
+}
+
+html[data-theme="dark"] :is(
+    .filter-link,
+    .event-filter,
+    .completed-history-button,
+    .global-search-trigger,
+    .search-input-wrapper,
+    .data-secondary-button,
+    .notification-secondary-button,
+    .app-modal-close,
+    .modal-cancel-button,
+    .cancel-button
+) {
+    border-color: var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+}
+
+html[data-theme="dark"] :is(
+    .filter-link.active,
+    .event-filter.active,
+    .calendar-view-button.active,
+    .create-button,
+    .modal-save-button,
+    .save-button,
+    .login-button,
+    .backup-primary-button,
+    .notification-primary-button
+) {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+}
+
+html[data-theme="dark"] :is(
+    .settings-note,
+    .export-panel,
+    .notification-settings
+) {
+    border-color: var(--info-border);
+    background: var(--info-background);
+}
+
+html[data-theme="dark"] :is(
+    .data-summary-card,
+    .reminder-summary-item,
+    .search-result-item,
+    .selected-day-item,
+    .summary-task-item
+) {
+    border-color: var(--border);
+    background: var(--surface-secondary);
+}
+
+html[data-theme="dark"] :is(
+    .edit-task-action,
+    .edit-event-action,
+    .edit-category,
+    .today-link
+) {
+    border-color: var(--info-border);
+    background: var(--info-background);
+    color: var(--info-text);
+}
+
+html[data-theme="dark"] :is(
+    .delete-task-action,
+    .delete-event-action,
+    .delete-category,
+    .past-event-delete-button,
+    .shutdown-access
+) {
+    border-color: var(--danger-border);
+    background: var(--danger-background);
+    color: var(--danger-text);
+}
+
+html[data-theme="dark"] :is(
+    .restore-action,
+    .toggle-category,
+    .repeat-create-menu summary
+) {
+    border-color: var(--warning-border);
+    background: var(--warning-background);
+    color: var(--warning-text);
+}
+
+html[data-theme="dark"] :is(
+    .restore-event-action,
+    .managed-backup-panel,
+    .calendar-transfer-panel
+) {
+    border-color: var(--success-border);
+    background: var(--success-background);
+    color: var(--success-text);
+}
+
+html[data-theme="dark"] .app-modal::backdrop,
+html[data-theme="dark"] .shutdown-dialog::backdrop {
+    background: var(--overlay);
+}
+
+html[data-theme="dark"] .app-modal-shell {
+    background: var(--surface-glass-strong);
+    box-shadow: var(--shadow-elevated);
+}
+
+html[data-theme="dark"] .category-card:target {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+
+html[data-theme="dark"] .calendar-day.today {
+    background: var(--primary-soft);
+}
+
+html[data-theme="dark"] .month-calendar .calendar-day:not(.outside-month),
+html[data-theme="dark"] .week-day,
+html[data-theme="dark"] .day-calendar-timeline {
+    background: var(--surface);
+}
+
+html[data-theme="dark"] img {
+    color-scheme: normal;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    body,
+    .sidebar,
+    .mobile-app-header,
+    .mobile-navigation,
+    .app-modal-shell {
+        transition:
+            background-color 180ms ease,
+            border-color 180ms ease,
+            color 180ms ease;
+    }
+}

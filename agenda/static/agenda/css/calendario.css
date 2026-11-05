@@ -207,17 +207,17 @@
     overflow: hidden;
     border-right: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
-    background: #ffffff;
+    background: var(--surface);
     cursor: pointer;
     transition: background-color 150ms ease, box-shadow 150ms ease;
 }
 
 .calendar-day:hover {
-    background: #fbfaff;
+    background: var(--surface-secondary);
 }
 
 .calendar-day.outside-month {
-    background: #f7f8fb;
+    background: var(--surface-secondary);
 }
 
 .calendar-day.outside-month .calendar-day-number,
@@ -226,7 +226,7 @@
 }
 
 .calendar-day.today {
-    background: #faf9ff;
+    background: var(--primary-soft);
     box-shadow: inset 0 0 0 2px var(--primary);
 }
 
@@ -342,7 +342,7 @@
     padding: 11px;
     border: 1px solid var(--border);
     border-radius: 14px;
-    background: #ffffff;
+    background: var(--surface);
 }
 
 .week-day.today {
@@ -439,7 +439,7 @@
     padding: 0 13px;
     border: 1px solid var(--border);
     border-radius: 10px;
-    background: #ffffff;
+    background: var(--surface);
     color: var(--primary);
     font-size: 0.77rem;
     font-weight: 800;
@@ -501,7 +501,7 @@
 
 .selected-day-item:hover {
     border-color: #cbc6f4;
-    background: #fbfaff;
+    background: var(--surface-secondary);
     transform: translateY(-1px);
 }
 
@@ -836,7 +836,7 @@
     padding: 7px;
     border: 1px solid var(--border);
     border-radius: 12px;
-    background: #ffffff;
+    background: var(--surface);
     box-shadow: 0 14px 34px rgba(35, 39, 66, 0.15);
 }
 
