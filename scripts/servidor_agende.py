@@ -41,6 +41,12 @@ PUSH_LOGGER = logging.getLogger("agenda")
 PUSH_SCHEDULER_STOP = threading.Event()
 
 
+def service_port() -> int:
+    """Respeta el puerto impuesto por el proveedor administrado."""
+
+    return env_int("AGENDE_PORT", env_int("PORT", 8000))
+
+
 def remove_pid_file() -> None:
     """Elimina el PID únicamente si pertenece a este proceso."""
 
@@ -136,7 +142,7 @@ def main() -> int:
     """Inicia Waitress y mantiene un PID para detenerlo con seguridad."""
 
     host = os.getenv("AGENDE_HOST", "0.0.0.0").strip() or "0.0.0.0"
-    port = env_int("AGENDE_PORT", 8000)
+    port = service_port()
     threads = env_int("AGENDE_THREADS", 4)
 
     RUNTIME_DIR.mkdir(parents=True, exist_ok=True)

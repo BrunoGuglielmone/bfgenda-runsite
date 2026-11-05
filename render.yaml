@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: bfgenda
+    runtime: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /sistema/estado/
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: AGENDE_SECRET_KEY
+        generateValue: true
+      - key: AGENDE_DEBUG
+        value: "0"
+      - key: AGENDE_HOST
+        value: 0.0.0.0
+      - key: AGENDE_THREADS
+        value: "2"
+      - key: AGENDE_AUTOMATIC_BACKUPS
+        value: "0"
+      - key: AGENDE_WEB_SHUTDOWN_ENABLED
+        value: "0"
+      - key: AGENDE_SESSION_COOKIE_SECURE
+        value: "1"
+      - key: AGENDE_CSRF_COOKIE_SECURE
+        value: "1"
+      - key: AGENDE_TRUST_X_FORWARDED_PROTO
+        value: "1"
+      - key: AGENDE_SECURE_HSTS_SECONDS
+        value: "3600"
+      - key: AGENDE_PUSH_SCHEDULER_ENABLED
+        value: "0"
+      - key: AGENDE_VAPID_PUBLIC_KEY
+        sync: false
+      - key: AGENDE_VAPID_PRIVATE_KEY
+        sync: false
+      - key: AGENDE_VAPID_SUBJECT
+        value: https://github.com/BrunoGuglielmone/bfgenda-runsite

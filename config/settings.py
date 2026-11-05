@@ -33,6 +33,16 @@ SECRET_KEY = os.getenv(
 
 DEBUG = env_bool("AGENDE_DEBUG", True)
 
+RENDER_EXTERNAL_HOSTNAME = os.getenv(
+    "RENDER_EXTERNAL_HOSTNAME",
+    "",
+).strip()
+managed_hostnames = (
+    (RENDER_EXTERNAL_HOSTNAME,)
+    if RENDER_EXTERNAL_HOSTNAME
+    else ()
+)
+
 ALLOWED_HOSTS = sorted(
     set(
         env_list(
@@ -41,7 +51,8 @@ ALLOWED_HOSTS = sorted(
                 "127.0.0.1",
                 "localhost",
                 "192.168.1.19",
-            ),
+            )
+            + managed_hostnames,
         )
         + local_ipv4_addresses()
     )
@@ -330,7 +341,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Configuracion HTTPS privada mediante Tailscale Serve
 CSRF_TRUSTED_ORIGINS = env_list(
     "AGENDE_CSRF_TRUSTED_ORIGINS",
-    default=(),
+    default=(
+        (f"https://{RENDER_EXTERNAL_HOSTNAME}",)
+        if RENDER_EXTERNAL_HOSTNAME
+        else ()
+    ),
 )
 
 # Opciones de producción activadas por el entorno del host. Se mantienen

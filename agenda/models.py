@@ -223,6 +223,35 @@ class EntregaNotificacion(models.Model):
         return f"{self.etiqueta} → {self.suscripcion_id}"
 
 
+class ConfiguracionAutomatizacion(models.Model):
+    """Conecta un programador externo sin publicar sus credenciales."""
+
+    endpoint_url = models.URLField(
+        max_length=500,
+        verbose_name="URL del despachador",
+    )
+    dispatch_token = models.CharField(
+        max_length=128,
+        verbose_name="token del despachador",
+    )
+    activa = models.BooleanField(
+        default=True,
+        verbose_name="activa",
+    )
+    actualizada_en = models.DateTimeField(
+        auto_now=True,
+        verbose_name="actualizada en",
+    )
+
+    class Meta:
+        db_table = "agenda_automatizacion_host"
+        verbose_name = "automatización del host"
+        verbose_name_plural = "automatizaciones del host"
+
+    def __str__(self):
+        return self.endpoint_url
+
+
 class Categoria(models.Model):
     """
     Categoría personal utilizada para organizar tareas y eventos.

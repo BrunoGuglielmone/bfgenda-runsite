@@ -23,6 +23,7 @@ from .data import (
     importar_ics,
 )
 from .notifications import (
+    despachar_recordatorios_programados,
     recordatorios_pendientes,
     suscripcion_push_eliminar,
     suscripcion_push_guardar,
@@ -61,6 +62,7 @@ __all__ = [
     "inicio",
     "busqueda",
     "recordatorios_pendientes",
+    "despachar_recordatorios_programados",
     "suscripcion_push_guardar",
     "suscripcion_push_eliminar",
     "suscripcion_push_probar",

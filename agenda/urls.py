@@ -43,6 +43,11 @@ urlpatterns = [
         views.suscripcion_push_probar,
         name="suscripcion_push_probar",
     ),
+    path(
+        "sistema/recordatorios/despachar/",
+        views.despachar_recordatorios_programados,
+        name="despachar_recordatorios_programados",
+    ),
     path("configuracion/", views.configuracion, name="configuracion"),
     path(
         "configuracion/editar/",

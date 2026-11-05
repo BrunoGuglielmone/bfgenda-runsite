@@ -4,17 +4,20 @@ from __future__ import annotations
 
 import json
 import re
+import secrets
 from urllib.parse import urlsplit
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
-from agenda.models import SuscripcionPush
+from agenda.models import ConfiguracionAutomatizacion, SuscripcionPush
 from agenda.services.notifications import collect_due_reminders
 from agenda.services.webpush import (
     PushConfigurationError,
     PushDeliveryError,
+    dispatch_due_push_notifications,
     push_is_configured,
     send_test_push,
 )
@@ -23,6 +26,50 @@ from agenda.services.webpush import (
 MAX_JSON_BODY_BYTES = 16 * 1024
 MAX_ENDPOINT_LENGTH = 4096
 BASE64URL_PATTERN = re.compile(r"^[A-Za-z0-9_-]+={0,2}$")
+
+
+@csrf_exempt
+@require_POST
+def despachar_recordatorios_programados(request):
+    """Permite que Neon active el despacho sin exponer datos personales."""
+
+    authorization = request.headers.get("Authorization", "")
+    prefix = "Bearer "
+    supplied_token = (
+        authorization[len(prefix):].strip()
+        if authorization.startswith(prefix)
+        else ""
+    )
+    automation = (
+        ConfiguracionAutomatizacion.objects
+        .filter(activa=True)
+        .order_by("id")
+        .first()
+    )
+
+    if (
+        automation is None
+        or not supplied_token
+        or not secrets.compare_digest(
+            supplied_token,
+            automation.dispatch_token,
+        )
+    ):
+        return JsonResponse({"detail": "No autorizado."}, status=403)
+
+    try:
+        result = dispatch_due_push_notifications()
+    except PushConfigurationError as error:
+        return JsonResponse({"detail": str(error)}, status=503)
+
+    return JsonResponse(
+        {
+            "sent": result.sent,
+            "failed": result.failed,
+            "skipped": result.skipped,
+            "deactivated": result.deactivated,
+        }
+    )
 
 
 def _no_store_json(payload, *, status=200):

@@ -12,7 +12,11 @@ from unittest.mock import patch
 from django.core.exceptions import ImproperlyConfigured
 
 from config.database import database_config
-from scripts import iniciar_host, iniciar_runsite_con_litestream
+from scripts import (
+    iniciar_host,
+    iniciar_runsite_con_litestream,
+    servidor_agende,
+)
 
 
 class DatabaseEnvironmentTests(TestCase):
@@ -59,6 +63,14 @@ class DatabaseEnvironmentTests(TestCase):
 
 
 class ManagedHostStartupTests(TestCase):
+    def test_uses_provider_port_when_agende_port_is_absent(self):
+        with patch.dict(
+            os.environ,
+            {"AGENDE_PORT": "", "PORT": "17321"},
+            clear=False,
+        ):
+            self.assertEqual(servidor_agende.service_port(), 17321)
+
     def test_postgresql_arranca_django_sin_litestream(self):
         with (
             patch.dict(

@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from agenda.models import (
+    ConfiguracionAutomatizacion,
     EntregaNotificacion,
     SuscripcionPush,
     Tarea,
@@ -42,6 +43,48 @@ def aware_local(year, month, day, hour, minute=0):
         datetime(year, month, day, hour, minute),
         timezone.get_current_timezone(),
     )
+
+
+class ScheduledPushEndpointTests(TestCase):
+    def setUp(self):
+        self.automation = ConfiguracionAutomatizacion.objects.create(
+            endpoint_url=(
+                "https://bfgenda.onrender.com/"
+                "sistema/recordatorios/despachar/"
+            ),
+            dispatch_token="token-privado-de-prueba",
+        )
+        self.url = reverse(
+            "agenda:despachar_recordatorios_programados"
+        )
+
+    def test_rejects_missing_or_wrong_token(self):
+        self.assertEqual(self.client.post(self.url).status_code, 403)
+        response = self.client.post(
+            self.url,
+            HTTP_AUTHORIZATION="Bearer token-incorrecto",
+        )
+        self.assertEqual(response.status_code, 403)
+
+    @patch(
+        "agenda.views.notifications.dispatch_due_push_notifications"
+    )
+    def test_dispatches_with_valid_token(self, mocked_dispatch):
+        mocked_dispatch.return_value = MagicMock(
+            sent=1,
+            failed=0,
+            skipped=2,
+            deactivated=0,
+        )
+
+        response = self.client.post(
+            self.url,
+            HTTP_AUTHORIZATION="Bearer token-privado-de-prueba",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["sent"], 1)
+        mocked_dispatch.assert_called_once_with()
 
 
 @override_settings(**PUSH_SETTINGS)

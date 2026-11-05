@@ -1,5 +1,8 @@
 # Entorno virtual
 .venv/
+.tools/
+.neon
+.neon-private/
 
 # Archivos temporales de Python
 __pycache__/
