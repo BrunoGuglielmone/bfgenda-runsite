@@ -35,4 +35,4 @@ services:
       - key: AGENDE_VAPID_PRIVATE_KEY
         sync: false
       - key: AGENDE_VAPID_SUBJECT
-        value: https://github.com/BrunoGuglielmone/bfgenda-runsite
+        value: mailto:bguglielmone@docente.ceibal.edu.uy

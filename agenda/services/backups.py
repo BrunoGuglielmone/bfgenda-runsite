@@ -92,6 +92,15 @@ class RestoreResult:
     safety_backup: BackupInfo
 
 
+def sqlite_backups_enabled() -> bool:
+    """Indica si las copias integradas pueden operar en este entorno."""
+
+    return (
+        settings.DATABASES["default"].get("ENGINE")
+        == "django.db.backends.sqlite3"
+    )
+
+
 def get_database_path(database_path=None) -> Path:
     """Obtiene la ruta SQLite configurada y rechaza otros motores."""
 

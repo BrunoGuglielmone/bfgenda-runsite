@@ -6,7 +6,7 @@
 {% block extra_css %}
     <link data-page-style
         rel="stylesheet"
-        href="{% static 'agenda/css/configuracion.css' %}?v=20260728-1"
+        href="{% static 'agenda/css/configuracion.css' %}?v=20261105-1"
     >
 {% endblock %}
 
@@ -242,6 +242,54 @@
         </div>
     </section>
 
+    <section class="automation-health" aria-labelledby="automation-health-title">
+        <div class="automation-health-icon" aria-hidden="true">●</div>
+
+        <div class="automation-health-content">
+            <p class="settings-section-label">Supervisión del servidor</p>
+            <h2 id="automation-health-title">Recordatorios en segundo plano</h2>
+
+            {% if automatizacion and automatizacion.ultima_ejecucion_en %}
+                <p>
+                    Última comprobación:
+                    <strong>
+                        {{ automatizacion.ultima_ejecucion_en|date:"d/m/Y H:i:s" }}
+                    </strong>
+                </p>
+                <div class="automation-health-summary">
+                    <span
+                        class="automation-state state-{{ automatizacion.ultimo_estado }}"
+                    >
+                        {% if automatizacion.ultimo_estado == "correcto" %}
+                            Funcionando correctamente
+                        {% else %}
+                            Requiere atención
+                        {% endif %}
+                    </span>
+                    <span>
+                        {{ automatizacion.ultimo_enviados }} enviados ·
+                        {{ automatizacion.ultimo_fallidos }} fallidos ·
+                        {{ automatizacion.ultimo_omitidos }} omitidos
+                    </span>
+                </div>
+                {% if automatizacion.ultimo_error %}
+                    <p class="automation-error">
+                        {{ automatizacion.ultimo_error }}
+                    </p>
+                {% endif %}
+            {% elif automatizacion %}
+                <p>
+                    La automatización está configurada y espera su primera
+                    ejecución registrada.
+                </p>
+            {% else %}
+                <p>
+                    No existe una automatización activa para los recordatorios.
+                </p>
+            {% endif %}
+        </div>
+    </section>
+
     <section class="data-management-section" aria-labelledby="data-management-title">
         <header class="data-management-header">
             <div>
@@ -253,25 +301,35 @@
                 </p>
             </div>
 
-            <form
-                method="post"
-                action="{% url 'agenda:backup_crear' %}"
-                data-ajax-form
-            >
-                {% csrf_token %}
-                <input
-                    type="hidden"
-                    name="return_url"
-                    value="{% url 'agenda:configuracion' %}"
+            {% if copias_sqlite_habilitadas %}
+                <form
+                    method="post"
+                    action="{% url 'agenda:backup_crear' %}"
+                    data-ajax-form
                 >
-                <button class="backup-primary-button" type="submit">
-                    <span aria-hidden="true">＋</span>
-                    Crear copia ahora
-                </button>
-            </form>
+                    {% csrf_token %}
+                    <input
+                        type="hidden"
+                        name="return_url"
+                        value="{% url 'agenda:configuracion' %}"
+                    >
+                    <button class="backup-primary-button" type="submit">
+                        <span aria-hidden="true">＋</span>
+                        Crear copia ahora
+                    </button>
+                </form>
+            {% else %}
+                <a
+                    class="backup-primary-button"
+                    href="{% url 'agenda:exportar_respaldo_logico' %}"
+                >
+                    Descargar respaldo lógico
+                </a>
+            {% endif %}
         </header>
 
-        <div class="data-summary-grid">
+        {% if copias_sqlite_habilitadas %}
+            <div class="data-summary-grid">
             <article class="data-summary-card">
                 <span aria-hidden="true">↻</span>
                 <div>
@@ -307,7 +365,26 @@
                     {% endif %}
                 </div>
             </article>
-        </div>
+            </div>
+        {% else %}
+            <div class="managed-backup-panel">
+                <span aria-hidden="true">☁</span>
+                <div>
+                    <p class="settings-section-label">Base administrada</p>
+                    <h3>Neon PostgreSQL</h3>
+                    <p>
+                        Neon conserva recuperación inmediata de corto plazo. Además,
+                        el respaldo lógico descarga usuarios, categorías, tareas,
+                        eventos y preferencias en un archivo restaurable e independiente
+                        del motor de base de datos.
+                    </p>
+                    <small>
+                        El archivo contiene información privada y debe guardarse en un
+                        lugar seguro.
+                    </small>
+                </div>
+            </div>
+        {% endif %}
 
         <div class="export-panel">
             <div>
@@ -316,6 +393,7 @@
                 <p>
                     JSON conserva la estructura completa para consulta técnica. El ZIP
                     incluye CSV separados para tareas, eventos, categorías y preferencias.
+                    El respaldo lógico también conserva la cuenta y puede restaurarse.
                 </p>
             </div>
 
@@ -331,6 +409,12 @@
                     href="{% url 'agenda:exportar_csv' %}"
                 >
                     Descargar CSV
+                </a>
+                <a
+                    class="data-secondary-button"
+                    href="{% url 'agenda:exportar_respaldo_logico' %}"
+                >
+                    Respaldo restaurable
                 </a>
             </div>
         </div>
@@ -369,6 +453,7 @@
             </div>
         </div>
 
+        {% if copias_sqlite_habilitadas %}
         <div class="backup-list-panel">
             <header class="backup-list-header">
                 <div>
@@ -447,5 +532,6 @@
                 </p>
             </div>
         </div>
+        {% endif %}
     </section>
 {% endblock %}

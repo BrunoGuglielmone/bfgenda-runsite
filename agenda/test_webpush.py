@@ -87,6 +87,31 @@ class ScheduledPushEndpointTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["sent"], 1)
         mocked_dispatch.assert_called_once_with()
+        self.automation.refresh_from_db()
+        self.assertEqual(self.automation.ultimo_estado, "correcto")
+        self.assertEqual(self.automation.ultimo_enviados, 1)
+        self.assertEqual(self.automation.ultimo_fallidos, 0)
+        self.assertEqual(self.automation.ultimo_omitidos, 2)
+        self.assertIsNotNone(self.automation.ultima_ejecucion_en)
+        self.assertIsNotNone(self.automation.ultimo_exito_en)
+
+    @patch(
+        "agenda.views.notifications.dispatch_due_push_notifications",
+        side_effect=PushConfigurationError("VAPID incompleto"),
+    )
+    def test_records_configuration_failure(self, mocked_dispatch):
+        response = self.client.post(
+            self.url,
+            HTTP_AUTHORIZATION="Bearer token-privado-de-prueba",
+        )
+
+        self.assertEqual(response.status_code, 503)
+        self.automation.refresh_from_db()
+        self.assertEqual(self.automation.ultimo_estado, "error")
+        self.assertEqual(self.automation.ultimo_error, "VAPID incompleto")
+        self.assertIsNotNone(self.automation.ultima_ejecucion_en)
+        self.assertIsNone(self.automation.ultimo_exito_en)
+        mocked_dispatch.assert_called_once_with()
 
 
 @override_settings(**PUSH_SETTINGS)

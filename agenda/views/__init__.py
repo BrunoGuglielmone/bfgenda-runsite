@@ -20,6 +20,7 @@ from .data import (
     exportar_csv,
     exportar_ics,
     exportar_json,
+    exportar_respaldo_logico,
     importar_ics,
 )
 from .notifications import (
@@ -73,6 +74,7 @@ __all__ = [
     "backup_restaurar",
     "exportar_json",
     "exportar_csv",
+    "exportar_respaldo_logico",
     "exportar_ics",
     "importar_ics",
     "calendario",

@@ -1502,6 +1502,50 @@ class AgendaDataViewsTests(TestCase):
         self.assertIn("Tarea exportada", titles)
         self.assertNotIn("Tarea ajena", titles)
 
+    def test_logical_backup_is_restorable_and_excludes_other_users(self):
+        response = self.client.get(
+            reverse("agenda:exportar_respaldo_logico")
+        )
+        fixture = json.loads(response.content.decode("utf-8"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(
+            "bfgenda-respaldo-logico-",
+            response["Content-Disposition"],
+        )
+        users = [
+            item for item in fixture if item["model"] == "auth.user"
+        ]
+        task_titles = [
+            item["fields"]["titulo"]
+            for item in fixture
+            if item["model"] == "agenda.tarea"
+        ]
+        self.assertEqual(len(users), 1)
+        self.assertEqual(users[0]["fields"]["username"], "bruno-datos")
+        self.assertIn("Tarea exportada", task_titles)
+        self.assertNotIn("Tarea ajena", task_titles)
+
+    @patch(
+        "agenda.views.preferences.sqlite_backups_enabled",
+        return_value=False,
+    )
+    def test_managed_database_hides_sqlite_restore_controls(
+        self,
+        mocked_enabled,
+    ):
+        response = self.client.get(reverse("agenda:configuracion"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Neon PostgreSQL")
+        self.assertContains(
+            response,
+            reverse("agenda:exportar_respaldo_logico"),
+        )
+        self.assertNotContains(response, "Crear copia ahora")
+        self.assertNotContains(response, "Restaurar reemplaza")
+        mocked_enabled.assert_called_once_with()
+
     def test_csv_export_contains_expected_files(self):
         response = self.client.get(reverse("agenda:exportar_csv"))
 

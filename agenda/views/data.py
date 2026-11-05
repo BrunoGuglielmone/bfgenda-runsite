@@ -16,7 +16,11 @@ from agenda.services.backups import (
     get_backup,
     restore_backup,
 )
-from agenda.services.exports import build_csv_export, build_json_export
+from agenda.services.exports import (
+    build_csv_export,
+    build_json_export,
+    build_logical_backup,
+)
 from agenda.services.icalendar_io import (
     CalendarImportError,
     build_ics_export,
@@ -174,6 +178,14 @@ def exportar_csv(request):
     """Descarga un ZIP con archivos CSV separados por tipo de dato."""
 
     return _export_response(build_csv_export(request.user))
+
+
+@login_required
+@require_GET
+def exportar_respaldo_logico(request):
+    """Descarga una fixture restaurable compatible con SQLite y PostgreSQL."""
+
+    return _export_response(build_logical_backup(request.user))
 
 
 def _calendar_import_form_config(*, cancel_url: str) -> FormViewConfig:

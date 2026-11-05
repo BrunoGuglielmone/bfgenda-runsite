@@ -242,6 +242,38 @@ class ConfiguracionAutomatizacion(models.Model):
         auto_now=True,
         verbose_name="actualizada en",
     )
+    ultima_ejecucion_en = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="última ejecución",
+    )
+    ultimo_exito_en = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="último éxito",
+    )
+    ultimo_estado = models.CharField(
+        max_length=20,
+        blank=True,
+        verbose_name="último estado",
+    )
+    ultimo_error = models.CharField(
+        max_length=500,
+        blank=True,
+        verbose_name="último error",
+    )
+    ultimo_enviados = models.PositiveIntegerField(
+        default=0,
+        verbose_name="últimos enviados",
+    )
+    ultimo_fallidos = models.PositiveIntegerField(
+        default=0,
+        verbose_name="últimos fallidos",
+    )
+    ultimo_omitidos = models.PositiveIntegerField(
+        default=0,
+        verbose_name="últimos omitidos",
+    )
 
     class Meta:
         db_table = "agenda_automatizacion_host"

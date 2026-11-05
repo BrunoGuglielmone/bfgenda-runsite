@@ -6,10 +6,12 @@ Aplicación web privada para organizar tareas, eventos y categorías personales 
 
 - Python 3.13.14
 - Django 5.2.16
-- SQLite
+- SQLite en desarrollo local
+- PostgreSQL administrado por Neon en producción
 - Waitress 3.0.2
 - WhiteNoise 6.12.0
 - Web Push con VAPID
+- Render como host público
 - HTML, CSS y JavaScript sin frameworks externos
 - Zona horaria `America/Montevideo`
 
@@ -36,7 +38,19 @@ scripts/
 └── crear_accesos_directos.ps1
 ```
 
-## Inicio habitual
+## Aplicación publicada
+
+La instancia principal está disponible en:
+
+```text
+https://bfgenda.onrender.com
+```
+
+Render ejecuta Django y Neon conserva los datos aunque la computadora local
+esté apagada. Una Neon Function llama cada minuto al despachador privado de
+recordatorios.
+
+## Inicio local
 
 Después de instalar esta actualización, utiliza el acceso directo **BFGenda** del Escritorio.
 
@@ -57,11 +71,9 @@ Desde la PC:
 http://127.0.0.1:8000/
 ```
 
-Desde el celular conectado a la misma red:
-
-```text
-http://192.168.1.19:8000/
-```
+El acceso local se conserva para desarrollo y recuperación. Ya no se utiliza
+Tailscale ni una dirección privada de la computadora para la aplicación de
+producción.
 
 ## Configuración privada
 
@@ -101,11 +113,20 @@ Set-Location "C:\Users\Bruno Guglielmone\Desktop\Proyecto Agenda"
 
 El comando `runserver` puede seguir usándose para depuración puntual, pero el inicio habitual se realiza con Waitress.
 
+## Copias y recuperación
+
+- Neon permite recuperación inmediata dentro de la ventana incluida por el
+  plan y snapshots manuales antes de cambios importantes.
+- Configuración ofrece un respaldo lógico descargable y restaurable en una
+  base vacía, compatible con SQLite y PostgreSQL.
+- Las copias `.sqlite3` integradas siguen disponibles únicamente en el modo
+  local con SQLite.
+
 ## Alojamiento administrado
 
-La preparación del host gratuito, las rutas persistentes, las tareas de
-recordatorios y la migración segura de SQLite están documentadas en
-`deployment/RUNSITE.md`.
+La arquitectura activa, las tareas de recordatorios y la recuperación están
+documentadas en `deployment/RENDER_NEON.md`. Los documentos de Runsite y
+Northflank se conservan solamente como historial de alternativas evaluadas.
 
 ## Compatibilidad interna
 

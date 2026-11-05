@@ -7,10 +7,12 @@ import io
 import json
 import zipfile
 from dataclasses import dataclass
+from itertools import chain
 
+from django.core import serializers
 from django.utils import timezone
 
-from agenda.models import Categoria, Evento, Tarea
+from agenda.models import Categoria, Evento, PreferenciasUsuario, Tarea
 from agenda.services.preferences import get_user_preferences
 
 
@@ -138,6 +140,33 @@ def build_json_export(user) -> ExportFile:
     return ExportFile(
         content=content,
         filename=f"bfgenda-datos-{now:%Y%m%d-%H%M%S}.json",
+        content_type="application/json; charset=utf-8",
+    )
+
+
+def build_logical_backup(user) -> ExportFile:
+    """Genera una fixture restaurable e independiente del motor de base."""
+
+    preferences = get_user_preferences(user)
+    objects = chain(
+        [user],
+        Categoria.objects.filter(usuario=user).order_by("pk"),
+        Tarea.objects.filter(usuario=user).order_by("pk"),
+        Evento.objects.filter(usuario=user).order_by("pk"),
+        PreferenciasUsuario.objects.filter(pk=preferences.pk),
+    )
+    serialized = serializers.serialize(
+        "json",
+        objects,
+        indent=2,
+        ensure_ascii=False,
+    )
+    now = timezone.localtime()
+    return ExportFile(
+        content=serialized.encode("utf-8"),
+        filename=(
+            f"bfgenda-respaldo-logico-{now:%Y%m%d-%H%M%S}.json"
+        ),
         content_type="application/json; charset=utf-8",
     )
 

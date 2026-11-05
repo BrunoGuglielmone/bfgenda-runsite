@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
+from agenda.models import ConfiguracionAutomatizacion
+
 
 class NotificationInterfaceTests(TestCase):
     def setUp(self):
@@ -23,6 +25,25 @@ class NotificationInterfaceTests(TestCase):
         self.assertContains(
             response,
             "data-notification-panel",
+        )
+
+    def test_configuration_shows_scheduler_health(self):
+        ConfiguracionAutomatizacion.objects.create(
+            endpoint_url=(
+                "https://bfgenda.onrender.com/"
+                "sistema/recordatorios/despachar/"
+            ),
+            dispatch_token="token-privado",
+            ultimo_estado="correcto",
+        )
+
+        response = self.client.get(reverse("agenda:configuracion"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Recordatorios en segundo plano")
+        self.assertContains(
+            response,
+            "La automatización está configurada",
         )
         self.assertContains(
             response,

@@ -80,6 +80,11 @@ urlpatterns = [
         name="exportar_csv",
     ),
     path(
+        "configuracion/exportar/respaldo-logico/",
+        views.exportar_respaldo_logico,
+        name="exportar_respaldo_logico",
+    ),
+    path(
         "configuracion/calendario/exportar/",
         views.exportar_ics,
         name="exportar_ics",

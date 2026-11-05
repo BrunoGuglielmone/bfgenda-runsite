@@ -2,12 +2,44 @@ from django.contrib import admin
 
 from .models import (
     Categoria,
+    ConfiguracionAutomatizacion,
     EntregaNotificacion,
     Evento,
     PreferenciasUsuario,
     SuscripcionPush,
     Tarea,
 )
+
+
+@admin.register(ConfiguracionAutomatizacion)
+class ConfiguracionAutomatizacionAdmin(admin.ModelAdmin):
+    list_display = (
+        "endpoint_url",
+        "activa",
+        "ultima_ejecucion_en",
+        "ultimo_estado",
+        "ultimo_enviados",
+        "ultimo_fallidos",
+    )
+    readonly_fields = (
+        "endpoint_url",
+        "dispatch_token",
+        "activa",
+        "actualizada_en",
+        "ultima_ejecucion_en",
+        "ultimo_exito_en",
+        "ultimo_estado",
+        "ultimo_error",
+        "ultimo_enviados",
+        "ultimo_fallidos",
+        "ultimo_omitidos",
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(SuscripcionPush)

@@ -9,7 +9,9 @@ from agenda.services.backups import (
     BACKUP_MANUAL,
     automatic_backup_limit,
     list_backups,
+    sqlite_backups_enabled,
 )
+from agenda.models import ConfiguracionAutomatizacion
 from agenda.services.preferences import get_user_preferences
 from agenda.services.retention import COMPLETED_TASK_RETENTION_MONTHS
 from agenda.services.task_queries import UNDATED_REMINDER_SESSION_KEY
@@ -39,7 +41,8 @@ def configuracion(request):
     """Muestra preferencias, copias disponibles y opciones de exportación."""
 
     preferences = get_user_preferences(request.user)
-    backups = list_backups()
+    local_backups_enabled = sqlite_backups_enabled()
+    backups = list_backups() if local_backups_enabled else []
     automatic_backups = [
         backup for backup in backups if backup.kind == BACKUP_AUTOMATIC
     ]
@@ -52,6 +55,13 @@ def configuracion(request):
         "cantidad_copias_automaticas": len(automatic_backups),
         "cantidad_copias_manuales": len(manual_backups),
         "limite_copias_automaticas": automatic_backup_limit(),
+        "copias_sqlite_habilitadas": local_backups_enabled,
+        "automatizacion": (
+            ConfiguracionAutomatizacion.objects
+            .filter(activa=True)
+            .order_by("id")
+            .first()
+        ),
         "push_public_key": settings.AGENDE_VAPID_PUBLIC_KEY,
         "push_server_enabled": bool(
             settings.AGENDE_VAPID_PUBLIC_KEY

@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 import secrets
 from urllib.parse import urlsplit
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
@@ -26,6 +28,45 @@ from agenda.services.webpush import (
 MAX_JSON_BODY_BYTES = 16 * 1024
 MAX_ENDPOINT_LENGTH = 4096
 BASE64URL_PATTERN = re.compile(r"^[A-Za-z0-9_-]+={0,2}$")
+LOGGER = logging.getLogger("agenda")
+
+
+def _guardar_estado_automatizacion(
+    automation,
+    *,
+    estado,
+    error="",
+    result=None,
+    success=False,
+):
+    now = timezone.now()
+    automation.ultima_ejecucion_en = now
+    automation.ultimo_estado = estado
+    automation.ultimo_error = error[:500]
+    update_fields = [
+        "ultima_ejecucion_en",
+        "ultimo_estado",
+        "ultimo_error",
+        "actualizada_en",
+    ]
+
+    if result is not None:
+        automation.ultimo_enviados = result.sent
+        automation.ultimo_fallidos = result.failed
+        automation.ultimo_omitidos = result.skipped
+        update_fields.extend(
+            [
+                "ultimo_enviados",
+                "ultimo_fallidos",
+                "ultimo_omitidos",
+            ]
+        )
+
+    if success:
+        automation.ultimo_exito_en = now
+        update_fields.append("ultimo_exito_en")
+
+    automation.save(update_fields=update_fields)
 
 
 @csrf_exempt
@@ -60,7 +101,30 @@ def despachar_recordatorios_programados(request):
     try:
         result = dispatch_due_push_notifications()
     except PushConfigurationError as error:
+        _guardar_estado_automatizacion(
+            automation,
+            estado="error",
+            error=str(error),
+        )
         return JsonResponse({"detail": str(error)}, status=503)
+    except Exception:
+        LOGGER.exception("Falló el despachador programado de Web Push.")
+        _guardar_estado_automatizacion(
+            automation,
+            estado="error",
+            error="Error interno durante el despacho.",
+        )
+        return JsonResponse(
+            {"detail": "No fue posible completar el despacho."},
+            status=500,
+        )
+
+    _guardar_estado_automatizacion(
+        automation,
+        estado="correcto",
+        result=result,
+        success=True,
+    )
 
     return JsonResponse(
         {
