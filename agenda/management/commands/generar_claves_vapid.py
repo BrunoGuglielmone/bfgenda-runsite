@@ -19,6 +19,13 @@ class Command(BaseCommand):
             "private_key_file",
             help="Ruta nueva donde guardar la clave privada PEM.",
         )
+        parser.add_argument(
+            "--public-key-file",
+            help=(
+                "Ruta nueva opcional donde guardar la clave pública "
+                "Web Push."
+            ),
+        )
 
     def handle(self, *args, **options):
         path = Path(options["private_key_file"]).expanduser().resolve()
@@ -47,9 +54,20 @@ class Command(BaseCommand):
             format=serialization.PublicFormat.UncompressedPoint,
         )
         public_key = base64.urlsafe_b64encode(public_bytes).rstrip(b"=")
+        public_key_text = public_key.decode("ascii")
+
+        public_key_file = options.get("public_key_file")
+        if public_key_file:
+            public_path = Path(public_key_file).expanduser().resolve()
+            if public_path.exists():
+                path.unlink(missing_ok=True)
+                raise CommandError(
+                    "La ruta de la clave pública ya existe; no se "
+                    "guardó el nuevo par."
+                )
+            public_path.parent.mkdir(parents=True, exist_ok=True)
+            public_path.write_text(public_key_text, encoding="ascii")
 
         self.stdout.write(self.style.SUCCESS("Claves VAPID generadas."))
         self.stdout.write(f"AGENDE_VAPID_PRIVATE_KEY={path}")
-        self.stdout.write(
-            f"AGENDE_VAPID_PUBLIC_KEY={public_key.decode('ascii')}"
-        )
+        self.stdout.write(f"AGENDE_VAPID_PUBLIC_KEY={public_key_text}")
