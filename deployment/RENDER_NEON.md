@@ -24,3 +24,6 @@ La función programada de Neon debe ejecutarse cada minuto, validar el
 encabezado propio de los triggers de Neon y llamar esa ruta con el token
 privado. Así los recordatorios no dependen de que la computadora local esté
 encendida.
+
+El código desplegable está en `deployment/neon-function/index.mjs`. Sus dos
+variables privadas son `RENDER_DISPATCH_URL` y `RENDER_DISPATCH_TOKEN`.
