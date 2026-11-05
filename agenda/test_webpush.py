@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+from py_vapid import VapidException
 
 from agenda.models import (
     ConfiguracionAutomatizacion,
@@ -15,6 +16,7 @@ from agenda.models import (
     Tarea,
 )
 from agenda.services.webpush import (
+    PushConfigurationError,
     dispatch_due_push_notifications,
     send_test_push,
 )
@@ -224,6 +226,22 @@ class PushDispatchTests(TestCase):
             {"sub": "mailto:pruebas@example.com"},
         )
 
+    @patch(
+        "agenda.services.webpush.webpush",
+        side_effect=VapidException("subject inválido"),
+    )
+    def test_invalid_vapid_subject_is_reported_as_configuration_error(
+        self,
+        mocked_webpush,
+    ):
+        with self.assertRaisesMessage(
+            PushConfigurationError,
+            "identidad VAPID no es válida",
+        ):
+            send_test_push(self.subscription)
+
+        mocked_webpush.assert_called_once()
+
 
 class PushFrontendTests(TestCase):
     def test_service_worker_handles_background_push(self):
@@ -246,6 +264,7 @@ class PushFrontendTests(TestCase):
         self.assertIn("applicationServerKey", script)
         self.assertIn('getCookie("csrftoken")', script)
         self.assertIn("data-notification-disable", script)
+        self.assertIn("error.message", script)
 
 
 class HostedPushSchedulerTests(TestCase):

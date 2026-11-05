@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
+from py_vapid import VapidException
 from pywebpush import WebPushException, webpush
 
 from agenda.models import EntregaNotificacion, SuscripcionPush
@@ -86,6 +87,11 @@ def send_push_payload(
             ttl=3600,
             timeout=10,
         )
+    except VapidException as error:
+        raise PushConfigurationError(
+            "La identidad VAPID no es válida; debe configurarse como "
+            "un contacto mailto:."
+        ) from error
     except WebPushException as error:
         status = _response_status(error)
 

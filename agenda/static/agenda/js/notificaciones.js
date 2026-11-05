@@ -468,7 +468,11 @@
                     error
                 );
                 showToast(
-                    "No se pudo mostrar la notificaci\u00f3n.",
+                    (
+                        error instanceof Error && error.message
+                            ? error.message
+                            : "No se pudo mostrar la notificaci\u00f3n."
+                    ),
                     "error"
                 );
             } finally {
