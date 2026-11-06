@@ -1097,6 +1097,30 @@ class AgendaViewsTests(TestCase):
             preferences,
         )
 
+    def test_configuration_groups_responsive_sections(self):
+        response = self.client.get(reverse("agenda:configuracion"))
+        html = response.content.decode()
+        css_path = (
+            Path(__file__).resolve().parent
+            / "static"
+            / "agenda"
+            / "css"
+            / "configuracion.css"
+        )
+        css = css_path.read_text(encoding="utf-8")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("?v=20261106-1", html)
+        self.assertIn('class="settings-workspace"', html)
+        self.assertIn('aria-label="Secciones de configuración"', html)
+        self.assertIn('id="preferencias"', html)
+        self.assertIn('id="notificaciones"', html)
+        self.assertIn('id="datos-seguridad"', html)
+        self.assertIn("grid-template-columns: minmax(210px, 0.27fr)", css)
+        self.assertIn("position: sticky;", css)
+        self.assertIn("overflow-x: auto;", css)
+        self.assertIn("scroll-margin-top: 82px;", css)
+
     def test_configuration_shows_configurable_reminder_fields(self):
         response = self.client.get(
             reverse("agenda:configuracion_editar"),

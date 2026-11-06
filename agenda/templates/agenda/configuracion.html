@@ -6,7 +6,7 @@
 {% block extra_css %}
     <link data-page-style
         rel="stylesheet"
-        href="{% static 'agenda/css/configuracion.css' %}?v=20261105-1"
+        href="{% static 'agenda/css/configuracion.css' %}?v=20261106-1"
     >
 {% endblock %}
 
@@ -30,7 +30,70 @@
         </a>
     </header>
 
-    <section class="settings-grid" aria-label="Preferencias actuales">
+    <div class="settings-workspace">
+        <nav class="settings-navigation" aria-label="Secciones de configuración">
+            <div class="settings-navigation-heading">
+                <span aria-hidden="true">⚙</span>
+                <div>
+                    <p>Tu espacio</p>
+                    <strong>Configuración</strong>
+                </div>
+            </div>
+
+            <div class="settings-navigation-links">
+                <a href="#preferencias" class="settings-navigation-link">
+                    <span class="settings-navigation-number" aria-hidden="true">01</span>
+                    <span>
+                        <strong>Preferencias</strong>
+                        <small>Apariencia y calendario</small>
+                    </span>
+                </a>
+
+                <a href="#notificaciones" class="settings-navigation-link">
+                    <span class="settings-navigation-number" aria-hidden="true">02</span>
+                    <span>
+                        <strong>Notificaciones</strong>
+                        <small>Avisos y dispositivos</small>
+                    </span>
+                </a>
+
+                <a href="#datos-seguridad" class="settings-navigation-link">
+                    <span class="settings-navigation-number" aria-hidden="true">03</span>
+                    <span>
+                        <strong>Datos y seguridad</strong>
+                        <small>Copias y transferencias</small>
+                    </span>
+                </a>
+            </div>
+
+            <div class="settings-navigation-note">
+                <span aria-hidden="true">i</span>
+                <p>
+                    Tus preferencias son privadas y se aplican en todos tus
+                    dispositivos.
+                </p>
+            </div>
+        </nav>
+
+        <div class="settings-content">
+            <section
+                class="settings-section settings-section-preferences"
+                id="preferencias"
+                aria-labelledby="preferences-title"
+            >
+                <header class="settings-section-header">
+                    <span class="settings-section-icon" aria-hidden="true">◐</span>
+                    <div>
+                        <p class="settings-section-label">Personalización</p>
+                        <h2 id="preferences-title">Preferencias generales</h2>
+                        <p>
+                            Define cómo se ve BFGenda y los valores que utilizará
+                            al crear nuevas actividades.
+                        </p>
+                    </div>
+                </header>
+
+                <div class="settings-grid" aria-label="Preferencias actuales">
         <article class="settings-card settings-card-theme">
             <span class="settings-card-icon" aria-hidden="true">◐</span>
 
@@ -173,29 +236,47 @@
                 </p>
             </div>
         </article>
-    </section>
+                </div>
 
-    <section class="settings-note" role="note">
-        <span aria-hidden="true">i</span>
-        <div>
-            <strong>Configuración privada</strong>
-            <p>
-                Estas preferencias pertenecen únicamente a tu usuario y se
-                aplican tanto desde la computadora como desde el celular.
-            </p>
-        </div>
-    </section>
+                <section class="settings-note" role="note">
+                    <span aria-hidden="true">i</span>
+                    <div>
+                        <strong>Configuración privada</strong>
+                        <p>
+                            Estas preferencias pertenecen únicamente a tu usuario y se
+                            aplican tanto desde la computadora como desde el celular.
+                        </p>
+                    </div>
+                </section>
+            </section>
 
-    <section
-        class="notification-settings"
-        aria-labelledby="notification-settings-title"
-        data-notification-panel
-        data-push-server-enabled="{{ push_server_enabled|yesno:'true,false' }}"
-        data-push-public-key="{{ push_public_key }}"
-        data-push-subscribe-url="{% url 'agenda:suscripcion_push_guardar' %}"
-        data-push-unsubscribe-url="{% url 'agenda:suscripcion_push_eliminar' %}"
-        data-push-test-url="{% url 'agenda:suscripcion_push_probar' %}"
-    >
+            <section
+                class="settings-section settings-section-notifications"
+                id="notificaciones"
+                aria-labelledby="notifications-section-title"
+            >
+                <header class="settings-section-header">
+                    <span class="settings-section-icon" aria-hidden="true">⌁</span>
+                    <div>
+                        <p class="settings-section-label">Avisos</p>
+                        <h2 id="notifications-section-title">Notificaciones</h2>
+                        <p>
+                            Controla este dispositivo y comprueba el funcionamiento
+                            de los recordatorios automáticos.
+                        </p>
+                    </div>
+                </header>
+
+                <section
+                    class="notification-settings"
+                    aria-labelledby="notification-settings-title"
+                    data-notification-panel
+                    data-push-server-enabled="{{ push_server_enabled|yesno:'true,false' }}"
+                    data-push-public-key="{{ push_public_key }}"
+                    data-push-subscribe-url="{% url 'agenda:suscripcion_push_guardar' %}"
+                    data-push-unsubscribe-url="{% url 'agenda:suscripcion_push_eliminar' %}"
+                    data-push-test-url="{% url 'agenda:suscripcion_push_probar' %}"
+                >
         <div class="notification-settings-icon" aria-hidden="true">
             &#128276;
         </div>
@@ -253,9 +334,9 @@
                 Desactivar en este dispositivo
             </button>
         </div>
-    </section>
+                </section>
 
-    <section class="automation-health" aria-labelledby="automation-health-title">
+                <section class="automation-health" aria-labelledby="automation-health-title">
         <div class="automation-health-icon" aria-hidden="true">●</div>
 
         <div class="automation-health-content">
@@ -301,9 +382,14 @@
                 </p>
             {% endif %}
         </div>
-    </section>
+                </section>
+            </section>
 
-    <section class="data-management-section" aria-labelledby="data-management-title">
+            <section
+                class="settings-section data-management-section"
+                id="datos-seguridad"
+                aria-labelledby="data-management-title"
+            >
         <header class="data-management-header">
             <div>
                 <p class="settings-section-label">Seguridad de la información</p>
@@ -546,5 +632,7 @@
             </div>
         </div>
         {% endif %}
-    </section>
+            </section>
+        </div>
+    </div>
 {% endblock %}
