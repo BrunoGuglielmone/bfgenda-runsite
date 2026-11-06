@@ -66,7 +66,7 @@
 
 .category-card:target {
     border-color: var(--primary);
-    background: #faf9ff;
+    background: var(--primary-soft);
     box-shadow: 0 0 0 3px rgba(102, 87, 217, 0.13), var(--shadow);
 }
 
@@ -286,9 +286,9 @@
 }
 
 .edit-category {
-    border-color: #d8d3f7;
-    background: #faf9ff;
-    color: var(--primary-dark);
+    border-color: var(--info-border);
+    background: var(--info-background);
+    color: var(--info-text);
 }
 
 .edit-category .category-action-icon {
@@ -304,38 +304,38 @@
 }
 
 .delete-category {
-    border-color: #efcbd1;
-    background: #fff8f9;
-    color: #a22639;
+    border-color: var(--danger-border);
+    background: var(--danger-background);
+    color: var(--danger-text);
 }
 
 .delete-category .category-action-icon {
-    background: #ffe8ec;
-    color: #a22639;
+    background: var(--danger-soft);
+    color: var(--danger-text);
 }
 
 .delete-category:hover {
-    border-color: #d97080;
-    background: #fff0f2;
-    color: #8f1f31;
+    border-color: var(--danger);
+    background: var(--danger-soft);
+    color: var(--danger-text);
     transform: translateY(-1px);
 }
 
 .toggle-category {
-    border-color: #ead5a8;
-    background: #fffbf1;
-    color: #835b12;
+    border-color: var(--warning-border);
+    background: var(--warning-background);
+    color: var(--warning-text);
 }
 
 .toggle-category .category-action-icon {
-    background: #fff0c9;
-    color: #835b12;
+    background: var(--warning-background);
+    color: var(--warning-text);
 }
 
 .toggle-category:hover {
-    border-color: #d49a32;
-    background: #fff5dd;
-    color: #704a09;
+    border-color: var(--warning-text);
+    background: var(--warning-background);
+    color: var(--warning-text);
     transform: translateY(-1px);
 }
 

@@ -634,9 +634,21 @@
 }
 
 .summary-task-item:hover {
-    border-color: #cbc6f4;
-    background: #fbfaff;
+    border-color: var(--primary);
+    background: var(--primary-soft);
     transform: translateY(-1px);
+}
+
+.summary-task-item:focus-visible {
+    border-color: var(--primary);
+    outline: none;
+    background: var(--primary-soft);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.summary-task-item:active {
+    background: var(--primary-muted);
+    transform: translateY(0);
 }
 
 .summary-task-item.completed strong {

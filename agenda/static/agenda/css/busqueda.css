@@ -23,7 +23,7 @@
 
 .global-search-trigger:hover,
 .global-search-trigger.active {
-    border-color: #cbc6f4;
+    border-color: var(--primary-muted);
     background: var(--primary-soft);
     color: var(--primary-dark);
 }
@@ -230,7 +230,7 @@
 }
 
 .search-type-filter:hover {
-    border-color: #cbc6f4;
+    border-color: var(--primary-muted);
     color: var(--primary-dark);
 }
 
@@ -378,9 +378,15 @@
 
 .search-result-item:hover,
 .search-result-item:focus-visible {
-    border-color: #cbc6f4;
-    background: #fbfaff;
+    border-color: var(--primary);
+    outline: none;
+    background: var(--primary-soft);
     transform: translateY(-1px);
+}
+
+.search-result-item:active {
+    background: var(--primary-muted);
+    transform: translateY(0);
 }
 
 .search-result-color {

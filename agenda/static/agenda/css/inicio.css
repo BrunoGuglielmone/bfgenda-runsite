@@ -283,15 +283,17 @@ button {
 .statistic {
     min-width: 0;
     padding: 18px 10px;
-    border: 1px solid transparent;
+    border: 1px solid var(--border);
     border-radius: var(--radius-medium);
     background: var(--surface-secondary);
+    color: var(--text-secondary);
     text-align: center;
 }
 
 .statistic strong {
     display: block;
     margin-bottom: 6px;
+    color: var(--text);
     font-size: 1.65rem;
 }
 
@@ -320,10 +322,16 @@ button {
 
 .statistic-button:hover,
 .statistic-button:focus-visible {
-    border-color: #cbc6f4;
-    background: #fbfaff;
+    border-color: var(--primary);
+    background: var(--primary-soft);
     outline: none;
     transform: translateY(-2px);
+}
+
+.statistic-button:active {
+    border-color: var(--primary);
+    background: var(--primary-muted);
+    transform: translateY(0);
 }
 
 .statistic-button:hover small,
@@ -368,8 +376,8 @@ button {
 }
 
 .task-item:hover {
-    border-color: #cbc6f4;
-    background: #fbfaff;
+    border-color: var(--primary-muted);
+    background: var(--primary-soft);
     transform: translateY(-1px);
 }
 
@@ -636,8 +644,8 @@ button {
 }
 
 .logout-button:hover {
-    background: #fff0f2;
-    color: var(--danger);
+    background: var(--danger-background);
+    color: var(--danger-text);
 }
 @media (max-width: 420px) {
     .statistic-button small {
@@ -666,8 +674,8 @@ button {
     margin-left: 7px;
     padding: 4px 8px;
     border-radius: 20px;
-    background: #fff5dd;
-    color: #835b12;
+    background: var(--warning-background);
+    color: var(--warning-text);
     font-size: 0.65rem;
     font-weight: 800;
     vertical-align: middle;
@@ -700,7 +708,14 @@ button {
 .event-statistic-button:focus-visible {
     border-color: var(--primary);
     background: var(--primary-soft);
+    outline: none;
     transform: translateY(-2px);
+}
+
+.event-statistic-button:active {
+    border-color: var(--primary);
+    background: var(--primary-muted);
+    transform: translateY(0);
 }
 
 .event-statistic-button strong {
@@ -901,9 +916,9 @@ button {
 
     .mobile-logout-button:hover,
     .mobile-logout-button:focus-visible {
-        border-color: #efcbd1;
-        background: #fff0f2;
-        color: var(--danger);
+        border-color: var(--danger-border);
+        background: var(--danger-background);
+        color: var(--danger-text);
     }
 
     .mobile-more-panel,

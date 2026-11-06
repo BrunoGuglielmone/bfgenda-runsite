@@ -121,14 +121,14 @@
 }
 
 .complete-task-item:hover {
-    border-color: #cbc6f4;
-    background: #fbfaff;
+    border-color: var(--primary-muted);
+    background: var(--primary-soft);
     transform: translateY(-1px);
 }
 
 .complete-task-item:target {
     border-color: var(--primary);
-    background: #faf9ff;
+    background: var(--primary-soft);
     box-shadow: 0 0 0 3px rgba(102, 87, 217, 0.13);
 }
 
@@ -327,9 +327,9 @@
 }
 
 .edit-action {
-    border-color: #d8d3f7;
-    background: #faf9ff;
-    color: var(--primary-dark);
+    border-color: var(--info-border);
+    background: var(--info-background);
+    color: var(--info-text);
 }
 
 .edit-action .task-action-icon {
@@ -345,56 +345,56 @@
 }
 
 .delete-action {
-    border-color: #efcbd1;
-    background: #fff8f9;
-    color: #a22639;
+    border-color: var(--danger-border);
+    background: var(--danger-background);
+    color: var(--danger-text);
 }
 
 .delete-action .task-action-icon {
-    background: #ffe8ec;
-    color: #a22639;
+    background: var(--danger-soft);
+    color: var(--danger-text);
 }
 
 .delete-action:hover {
-    border-color: #d97080;
-    background: #fff0f2;
-    color: #8f1f31;
+    border-color: var(--danger);
+    background: var(--danger-soft);
+    color: var(--danger-text);
     transform: translateY(-1px);
 }
 
 .complete-action {
-    border-color: #bcdcc6;
-    background: #f4fbf6;
-    color: #34754a;
+    border-color: var(--success-border);
+    background: var(--success-background);
+    color: var(--success-text);
 }
 
 .complete-action .task-action-icon {
-    background: #dff3e5;
-    color: #34754a;
+    background: var(--success-background);
+    color: var(--success-text);
 }
 
 .complete-action:hover {
-    border-color: #5c9b70;
-    background: #eaf7ee;
-    color: #28613c;
+    border-color: var(--success-text);
+    background: var(--success-background);
+    color: var(--success-text);
     transform: translateY(-1px);
 }
 
 .restore-action {
-    border-color: #ead5a8;
-    background: #fffbf1;
-    color: #835b12;
+    border-color: var(--warning-border);
+    background: var(--warning-background);
+    color: var(--warning-text);
 }
 
 .restore-action .task-action-icon {
-    background: #fff0c9;
-    color: #835b12;
+    background: var(--warning-background);
+    color: var(--warning-text);
 }
 
 .restore-action:hover {
-    border-color: #d49a32;
-    background: #fff5dd;
-    color: #704a09;
+    border-color: var(--warning-text);
+    background: var(--warning-background);
+    color: var(--warning-text);
     transform: translateY(-1px);
 }
 

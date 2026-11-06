@@ -484,10 +484,10 @@
     align-items: center;
     justify-content: center;
     padding: 0 13px;
-    border: 1px solid #efd0d0;
+    border: 1px solid var(--danger-border);
     border-radius: 14px;
-    background: #fffafa;
-    color: #aa3c3c;
+    background: var(--danger-background);
+    color: var(--danger-text);
     font-size: 0.72rem;
     font-weight: 800;
     text-align: center;
@@ -495,13 +495,13 @@
 }
 
 .selected-series-delete:hover {
-    border-color: #d99c9c;
-    background: #fff1f1;
+    border-color: var(--danger);
+    background: var(--danger-soft);
 }
 
 .selected-day-item:hover {
-    border-color: #cbc6f4;
-    background: var(--surface-secondary);
+    border-color: var(--primary);
+    background: var(--primary-soft);
     transform: translateY(-1px);
 }
 

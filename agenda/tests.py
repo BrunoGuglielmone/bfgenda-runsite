@@ -1980,7 +1980,7 @@ class CalendarResponsivePhaseTests(TestCase):
         )
 
         self.assertIn("agenda/css/calendario", html)
-        self.assertIn("?v=20260821-3", html)
+        self.assertIn("?v=20261105-3", html)
         self.assertIn("agenda/js/calendario", html)
         self.assertIn("?v=20260821-1", html)
         self.assertIn(".month-calendar {\n        min-width: 0;", styles)
@@ -2134,7 +2134,7 @@ class VisualPhaseA2Tests(TestCase):
         css = css_path.read_text(encoding="utf-8")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("?v=20260802-4", html)
+        self.assertIn("?v=20261105-3", html)
         self.assertIn("backdrop-filter: blur(4px);", css)
         self.assertIn("@keyframes modal-shell-enter", css)
         self.assertIn("@keyframes modal-backdrop-enter", css)
@@ -2239,15 +2239,15 @@ class VisualPhaseA2Tests(TestCase):
         self.assertRegex(
             html,
             r"/static/agenda/css/modal(?:\.[0-9a-f]{12})?\.css"
-            r"\?v=20260802-4",
+            r"\?v=20261105-3",
         )
         self.assertRegex(
             html,
             r"/static/agenda/js/app(?:\.[0-9a-f]{12})?\.js"
             r"\?v=20261105-2",
         )
-        self.assertEqual(html.count("?v=20260802-4"), 1)
-        self.assertEqual(html.count("?v=20261105-2"), 2)
+        self.assertGreaterEqual(html.count("?v=20261105-3"), 3)
+        self.assertEqual(html.count("?v=20261105-2"), 1)
 
 
     def test_mobile_form_rows_use_two_columns(self):
@@ -2281,7 +2281,7 @@ class VisualPhaseA2Tests(TestCase):
         self.assertNotIn("@media (max-width: 340px)", css)
 
         response = self.client.get(reverse("agenda:inicio"))
-        self.assertContains(response, "?v=20260802-4")
+        self.assertContains(response, "?v=20261105-3")
 
     def test_dashboard_uses_neutral_marker_without_category(self):
         Tarea.objects.create(
@@ -2344,6 +2344,35 @@ class VisualPhaseA2Tests(TestCase):
         self.assertIn("prefers-color-scheme: dark", script)
         self.assertIn("bfgenda-theme-preference", script)
         self.assertIn("BFGendaTheme", script)
+
+    def test_selectable_cards_keep_readable_theme_aware_states(self):
+        from pathlib import Path
+
+        css_root = Path(__file__).resolve().parent / "static" / "agenda" / "css"
+        interactive_styles = {
+            name: (css_root / name).read_text(encoding="utf-8")
+            for name in (
+                "inicio.css",
+                "busqueda.css",
+                "tareas.css",
+                "eventos.css",
+                "categorias.css",
+                "modal.css",
+            )
+        }
+
+        for css in interactive_styles.values():
+            self.assertNotIn("#fbfaff", css)
+            self.assertNotIn("#faf9ff", css)
+
+        dashboard_css = interactive_styles["inicio.css"]
+        self.assertIn(".statistic-button:active", dashboard_css)
+        self.assertIn(".event-statistic-button:active", dashboard_css)
+        self.assertIn("background: var(--primary-soft);", dashboard_css)
+
+        modal_css = interactive_styles["modal.css"]
+        self.assertIn(".summary-task-item:focus-visible", modal_css)
+        self.assertIn(".summary-task-item:active", modal_css)
 
     def test_login_and_offline_shell_load_theme_assets(self):
         self.client.logout()
