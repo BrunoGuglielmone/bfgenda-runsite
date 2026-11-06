@@ -35,6 +35,21 @@
                 <div>
                     <div class="summary-read-title">
                         <strong>{{ elemento.titulo }}</strong>
+
+                        <span
+                            class="summary-category-chip"
+                            style="--summary-category-color: {{ elemento.categoria_color|default:'#9A9EAD' }};"
+                            title="Categoría: {{ elemento.categoria|default:'Sin categoría' }}"
+                        >
+                            <span
+                                class="summary-category-dot"
+                                aria-hidden="true"
+                            ></span>
+                            <span class="summary-category-name">
+                                {{ elemento.categoria|default:"Sin categoría" }}
+                            </span>
+                        </span>
+
                         <span class="summary-read-type {{ elemento.tipo_clase }}">
                             {{ elemento.tipo }}
                         </span>

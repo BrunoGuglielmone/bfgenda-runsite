@@ -45,13 +45,14 @@ def calendario_dia_resumen(request):
                 value
                 for value in (
                     item["detalle_hora"],
-                    item["categoria"],
                     item["estado"],
                 )
                 if value
             ),
             "secundario": None,
             "color": item["color"],
+            "categoria": item["categoria"],
+            "categoria_color": item["color"],
             "tipo": item["tipo_etiqueta"],
             "tipo_clase": item["tipo"],
             "url": item["url"],

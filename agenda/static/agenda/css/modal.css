@@ -623,7 +623,7 @@
 
 .summary-task-item {
     display: grid;
-    grid-template-columns: 11px minmax(0, 1fr) auto;
+    grid-template-columns: 7px minmax(0, 1fr) auto;
     align-items: center;
     gap: 11px;
     padding: 13px;
@@ -657,7 +657,7 @@
 }
 
 .summary-task-color {
-    width: 11px;
+    width: 7px;
     height: 36px;
     border-radius: 8px;
     background: var(--task-color, #9a9ead);
@@ -763,7 +763,58 @@
 .summary-read-title {
     display: flex;
     align-items: center;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.summary-read-title > strong {
+    min-width: 0;
+    flex: 0 1 auto;
+}
+
+.summary-category-chip {
+    display: inline-flex;
+    min-width: 0;
+    max-width: min(180px, 100%);
+    flex: 0 1 auto;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 7px;
+    border: 1px solid color-mix(
+        in srgb,
+        var(--summary-category-color, #9a9ead) 48%,
+        var(--border)
+    );
+    border-radius: 999px;
+    background: color-mix(
+        in srgb,
+        var(--summary-category-color, #9a9ead) 18%,
+        var(--surface)
+    );
+    color: var(--text);
+    font-size: 0.61rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.summary-category-dot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: var(--summary-category-color, #9a9ead);
+    box-shadow: 0 0 0 2px color-mix(
+        in srgb,
+        var(--summary-category-color, #9a9ead) 18%,
+        transparent
+    );
+}
+
+.summary-category-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .summary-read-type {
@@ -775,8 +826,8 @@
 }
 
 .summary-read-type.tarea {
-    background: #eaf7ee;
-    color: #34754a;
+    background: var(--success-background);
+    color: var(--success-text);
 }
 
 .summary-read-type.evento {

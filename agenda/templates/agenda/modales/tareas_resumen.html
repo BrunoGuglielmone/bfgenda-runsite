@@ -35,7 +35,23 @@
                 ></span>
 
                 <div>
-                    <strong>{{ tarea.titulo }}</strong>
+                    <div class="summary-read-title">
+                        <strong>{{ tarea.titulo }}</strong>
+
+                        <span
+                            class="summary-category-chip"
+                            style="--summary-category-color: {{ tarea.categoria.color|default:'#9A9EAD' }};"
+                            title="Categoría: {{ tarea.categoria.nombre|default:'Sin categoría' }}"
+                        >
+                            <span
+                                class="summary-category-dot"
+                                aria-hidden="true"
+                            ></span>
+                            <span class="summary-category-name">
+                                {{ tarea.categoria.nombre|default:"Sin categoría" }}
+                            </span>
+                        </span>
+                    </div>
 
                     <p>
                         {% if tarea.fecha_limite %}
@@ -48,7 +64,6 @@
                             · {{ tarea.hora_limite|time:"H:i" }}
                         {% endif %}
 
-                        · {{ tarea.categoria.nombre|default:"Sin categoría" }}
                         · {{ tarea.get_prioridad_display }}
                     </p>
 

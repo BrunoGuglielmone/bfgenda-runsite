@@ -254,6 +254,59 @@ class AgendaViewsTests(TestCase):
         )
         self.assertNotIn("data-modal-url", html)
 
+    def test_task_and_event_summaries_show_colored_category_chips(self):
+        category = Categoria.objects.create(
+            usuario=self.user,
+            nombre="Trabajo profundo",
+            color="#3366AA",
+        )
+        today = timezone.localdate()
+        Tarea.objects.create(
+            usuario=self.user,
+            titulo="Tarea categorizada",
+            categoria=category,
+            fecha_limite=today,
+        )
+        zone = timezone.get_current_timezone()
+        Evento.objects.create(
+            usuario=self.user,
+            titulo="Evento categorizado",
+            categoria=category,
+            inicio=timezone.make_aware(
+                datetime.combine(today, time(hour=9)),
+                zone,
+            ),
+            fin=timezone.make_aware(
+                datetime.combine(today, time(hour=10)),
+                zone,
+            ),
+        )
+
+        responses = (
+            self.client.get(
+                reverse("agenda:tareas_resumen"),
+                {"tipo": "pendientes"},
+                **AJAX_HEADERS,
+            ),
+            self.client.get(
+                reverse("agenda:eventos_resumen"),
+                {"tipo": "hoy"},
+                **AJAX_HEADERS,
+            ),
+            self.client.get(
+                reverse("agenda:calendario_dia_resumen"),
+                {"fecha": today.isoformat()},
+                **AJAX_HEADERS,
+            ),
+        )
+
+        for response in responses:
+            self.assertEqual(response.status_code, 200)
+            html = response.json()["html"]
+            self.assertIn("summary-category-chip", html)
+            self.assertIn("--summary-category-color: #3366AA", html)
+            self.assertIn("Trabajo profundo", html)
+
     def test_calendar_items_redirect_to_their_lists_without_edit_modal(self):
         selected_day = timezone.localdate()
         task = Tarea.objects.create(
@@ -2134,7 +2187,7 @@ class VisualPhaseA2Tests(TestCase):
         css = css_path.read_text(encoding="utf-8")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("?v=20261105-3", html)
+        self.assertIn("?v=20261106-1", html)
         self.assertIn("backdrop-filter: blur(4px);", css)
         self.assertIn("@keyframes modal-shell-enter", css)
         self.assertIn("@keyframes modal-backdrop-enter", css)
@@ -2239,14 +2292,15 @@ class VisualPhaseA2Tests(TestCase):
         self.assertRegex(
             html,
             r"/static/agenda/css/modal(?:\.[0-9a-f]{12})?\.css"
-            r"\?v=20261105-3",
+            r"\?v=20261106-1",
         )
         self.assertRegex(
             html,
             r"/static/agenda/js/app(?:\.[0-9a-f]{12})?\.js"
             r"\?v=20261105-2",
         )
-        self.assertGreaterEqual(html.count("?v=20261105-3"), 3)
+        self.assertEqual(html.count("?v=20261105-3"), 2)
+        self.assertEqual(html.count("?v=20261106-1"), 1)
         self.assertEqual(html.count("?v=20261105-2"), 1)
 
 
@@ -2281,7 +2335,7 @@ class VisualPhaseA2Tests(TestCase):
         self.assertNotIn("@media (max-width: 340px)", css)
 
         response = self.client.get(reverse("agenda:inicio"))
-        self.assertContains(response, "?v=20261105-3")
+        self.assertContains(response, "?v=20261106-1")
 
     def test_dashboard_uses_neutral_marker_without_category(self):
         Tarea.objects.create(

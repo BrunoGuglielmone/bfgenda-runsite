@@ -8,12 +8,12 @@ def task_read_item(task, *, filter_name="pendientes"):
     date_text = task.fecha_limite.strftime("%d/%m/%Y") if task.fecha_limite else "Sin fecha"
     time_text = task.hora_limite.strftime("%H:%M") if task.hora_limite else None
     category = task.categoria.nombre if task.categoria else "Sin categoría"
+    category_color = task.categoria.color if task.categoria else "#9A9EAD"
     meta = " · ".join(
         value
         for value in (
             date_text,
             time_text,
-            category,
             task.get_prioridad_display(),
         )
         if value
@@ -27,7 +27,9 @@ def task_read_item(task, *, filter_name="pendientes"):
         "titulo": task.titulo,
         "meta": meta,
         "secundario": secondary,
-        "color": task.categoria.color if task.categoria else "#9A9EAD",
+        "color": category_color,
+        "categoria": category,
+        "categoria_color": category_color,
         "tipo": "Tarea",
         "tipo_clase": "tarea",
         "url": task_list_url(filter_name, task.id),
@@ -45,11 +47,11 @@ def event_read_item(event, *, filter_name="todos"):
         else f"{start:%d/%m/%Y %H:%M} – {end:%d/%m/%Y %H:%M}"
     )
     category = event.categoria.nombre if event.categoria else "Sin categoría"
+    category_color = event.categoria.color if event.categoria else "#9A9EAD"
     meta = " · ".join(
         value
         for value in (
             date_text,
-            category,
             event.ubicacion or None,
             event.get_estado_display(),
         )
@@ -60,7 +62,9 @@ def event_read_item(event, *, filter_name="todos"):
         "titulo": event.titulo,
         "meta": meta,
         "secundario": event.descripcion or None,
-        "color": event.categoria.color if event.categoria else "#9A9EAD",
+        "color": category_color,
+        "categoria": category,
+        "categoria_color": category_color,
         "tipo": "Evento",
         "tipo_clase": "evento",
         "url": event_list_url(filter_name, event.id),
