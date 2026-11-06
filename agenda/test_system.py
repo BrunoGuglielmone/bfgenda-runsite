@@ -53,11 +53,38 @@ class ShutdownFlowTests(TestCase):
         self.assertIn('data-autofocus="true"', html)
         self.assertNotIn(" autofocus", html)
         self.assertIn("agenda/js/login", html)
-        self.assertIn("?v=20260821-1", html)
+        self.assertIn("?v=20261106-1", html)
         self.assertIn("(hover: hover) and (pointer: fine)", login_script)
         self.assertIn("window.innerWidth > 760", login_script)
         self.assertIn("@media (max-width: 760px)", login_styles)
         self.assertIn("[data-desktop-shutdown]", login_styles)
+
+    def test_login_uses_responsive_visual_stage(self):
+        response = self.client.get(reverse("login"))
+        html = response.content.decode()
+        static_root = Path(__file__).resolve().parent / "static" / "agenda"
+        login_styles = (static_root / "css" / "login.css").read_text(
+            encoding="utf-8"
+        )
+        background = (
+            static_root
+            / "img"
+            / "login"
+            / "bfgenda-login-background-v1.png"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('class="login-background"', html)
+        self.assertIn('class="login-navigation"', html)
+        self.assertIn('class="login-hero"', html)
+        self.assertIn("Tarea rápida", html)
+        self.assertIn("Evento rápido", html)
+        self.assertIn('aria-disabled="true"', html)
+        self.assertIn("bfgenda-login-background-v1", html)
+        self.assertTrue(background.exists())
+        self.assertGreater(background.stat().st_size, 100_000)
+        self.assertIn("backdrop-filter: blur(26px)", login_styles)
+        self.assertIn("grid-template-columns: minmax(0, 1fr)", login_styles)
 
     def test_status_endpoint_reports_active_server_without_cache(self):
         response = self.client.get(
