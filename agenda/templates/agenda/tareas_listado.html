@@ -8,7 +8,7 @@
 {% block extra_css %}
     <link data-page-style
         rel="stylesheet"
-        href="{% static 'agenda/css/tareas.css' %}?v=20260801-1"
+        href="{% static 'agenda/css/tareas.css' %}?v=20261105-2"
     >
 {% endblock %}
 
@@ -43,6 +43,8 @@
     <nav
         class="task-filters"
         aria-label="Filtros de tareas"
+        aria-describedby="task-filter-swipe-hint"
+        data-filter-swipe
     >
         <a
             class="
@@ -173,8 +175,16 @@
         </a>
     </nav>
 
+    <p
+        id="task-filter-swipe-hint"
+        class="filter-swipe-hint"
+    >
+        <span aria-hidden="true">↔</span>
+        Desliza el listado para cambiar de sección
+    </p>
+
     <!-- Panel principal de tareas -->
-    <section class="tasks-panel">
+    <section class="tasks-panel" data-filter-swipe-surface>
         <header class="tasks-panel-header">
             <div>
                 <p class="panel-label">

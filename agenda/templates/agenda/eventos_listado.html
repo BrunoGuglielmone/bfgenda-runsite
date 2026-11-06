@@ -4,7 +4,7 @@
 {% block title %}Eventos | BFGenda{% endblock %}
 
 {% block extra_css %}
-    <link data-page-style rel="stylesheet" href="{% static 'agenda/css/eventos.css' %}?v=20260731-2">
+    <link data-page-style rel="stylesheet" href="{% static 'agenda/css/eventos.css' %}?v=20261105-2">
 {% endblock %}
 
 {% block content %}
@@ -25,7 +25,12 @@
         </a>
     </header>
 
-    <nav class="event-filters" aria-label="Filtros de eventos">
+    <nav
+        class="event-filters"
+        aria-label="Filtros de eventos"
+        aria-describedby="event-filter-swipe-hint"
+        data-filter-swipe
+    >
         <a class="event-filter{% if filtro_actual == 'todos' %} active{% endif %}" href="{% url 'agenda:eventos_listado' %}?filtro=todos"
                     data-app-link>
             Todos <span>{{ cantidad_eventos }}</span>
@@ -52,7 +57,15 @@
         </a>
     </nav>
 
-    <section class="events-panel">
+    <p
+        id="event-filter-swipe-hint"
+        class="filter-swipe-hint"
+    >
+        <span aria-hidden="true">↔</span>
+        Desliza el listado para cambiar de sección
+    </p>
+
+    <section class="events-panel" data-filter-swipe-surface>
         <header class="events-panel-header">
             <p class="panel-label">Listado</p>
             <h2>{{ cantidad_resultados }} evento{{ cantidad_resultados|pluralize }}</h2>

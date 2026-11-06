@@ -55,7 +55,7 @@
 
     <link
         rel="stylesheet"
-        href="{% static 'agenda/css/inicio.css' %}?v=20260801-3"
+        href="{% static 'agenda/css/inicio.css' %}?v=20261105-2"
     >
     <link
         rel="stylesheet"
@@ -278,7 +278,11 @@
                 class="mobile-link {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}"
                 href="{% url 'agenda:inicio' %}"
                     data-app-link>
-                <span aria-hidden="true">⌂</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M4 10.5L12 4L20 10.5"></path>
+                    <path d="M6.5 9.5V20H17.5V9.5"></path>
+                    <path d="M10 20V14H14V20"></path>
+                </svg>
                 Inicio
             </a>
 
@@ -286,7 +290,11 @@
                 class="mobile-link {% if request.resolver_match.url_name == 'calendario' %}active{% endif %}"
                 href="{% url 'agenda:calendario' %}"
                     data-app-link>
-                <span aria-hidden="true">▦</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <rect x="4" y="5.5" width="16" height="14.5" rx="2"></rect>
+                    <path d="M8 3.5V7.5M16 3.5V7.5M4 10H20"></path>
+                    <path d="M8 13H10M14 13H16M8 16.5H10M14 16.5H16"></path>
+                </svg>
                 Calendario
             </a>
 
@@ -337,7 +345,10 @@
                 class="mobile-link {% if request.resolver_match.url_name == 'tareas_listado' or request.resolver_match.url_name == 'tarea_crear' or request.resolver_match.url_name == 'tarea_editar' or request.resolver_match.url_name == 'tarea_eliminar' %}active{% endif %}"
                 href="{% url 'agenda:tareas_listado' %}"
                     data-app-link>
-                <span aria-hidden="true">✓</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <rect x="4" y="4" width="16" height="16" rx="3"></rect>
+                    <path d="M8 12L11 15L16.5 9"></path>
+                </svg>
                 Tareas
             </a>
 
@@ -345,7 +356,10 @@
                 class="mobile-link {% if request.resolver_match.url_name == 'eventos_listado' or request.resolver_match.url_name == 'evento_crear' or request.resolver_match.url_name == 'evento_editar' or request.resolver_match.url_name == 'evento_eliminar' %}active{% endif %}"
                 href="{% url 'agenda:eventos_listado' %}"
                     data-app-link>
-                <span aria-hidden="true">▣</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="12" r="8"></circle>
+                    <path d="M12 7.5V12L15.5 14"></path>
+                </svg>
                 Eventos
             </a>
         </nav>
@@ -368,7 +382,7 @@
 
     <div id="app-toast" class="app-toast" role="status" aria-live="polite"></div>
 
-    <script src="{% static 'agenda/js/app.js' %}?v=20260802-2" defer></script>
+    <script src="{% static 'agenda/js/app.js' %}?v=20261105-2" defer></script>
     <script src="{% static 'agenda/js/category-select.js' %}?v=20260801-1" defer></script>
     <script src="{% static 'agenda/js/busqueda.js' %}?v=20260727-1" defer></script>
     <script src="{% static 'agenda/js/calendario.js' %}?v=20260821-1" defer></script>

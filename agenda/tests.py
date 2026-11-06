@@ -1880,6 +1880,48 @@ class ResponsivePhaseATests(TestCase):
         self.assertGreaterEqual(task_html.count("data-app-link"), 23)
         self.assertGreaterEqual(event_html.count("data-app-link"), 21)
 
+    def test_task_and_event_lists_enable_mobile_swipe_navigation(self):
+        task_response = self.client.get(reverse("agenda:tareas_listado"))
+        event_response = self.client.get(
+            reverse("agenda:eventos_listado"),
+            {"filtro": "todos"},
+        )
+
+        for response in (task_response, event_response):
+            self.assertContains(response, "data-filter-swipe")
+            self.assertContains(response, "data-filter-swipe-surface")
+            self.assertContains(
+                response,
+                "Desliza el listado para cambiar de sección",
+            )
+
+    def test_mobile_swipe_assets_keep_vertical_scrolling_accessible(self):
+        from pathlib import Path
+
+        static_root = Path(__file__).resolve().parent / "static" / "agenda"
+        script = (static_root / "js" / "app.js").read_text(encoding="utf-8")
+        styles = (static_root / "css" / "inicio.css").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn('"touchstart"', script)
+        self.assertIn('"touchend"', script)
+        self.assertIn("Math.abs(deltaX) < 64", script)
+        self.assertIn("filter-swipe-out-${direction}", script)
+        self.assertIn("touch-action: pan-y", styles)
+        self.assertIn("filter-swipe-enter-next", styles)
+
+    def test_mobile_bottom_navigation_uses_consistent_vector_icons(self):
+        response = self.client.get(reverse("agenda:inicio"))
+        html = response.content.decode()
+        mobile_navigation = html.split(
+            'class="mobile-navigation"',
+            maxsplit=1,
+        )[1]
+
+        self.assertGreaterEqual(mobile_navigation.count("<svg"), 4)
+        self.assertIn('viewBox="0 0 24 24"', mobile_navigation)
+
     def test_calendar_and_settings_mark_their_page_styles(self):
         calendar_response = self.client.get(reverse("agenda:calendario"))
         settings_response = self.client.get(reverse("agenda:configuracion"))
@@ -2151,7 +2193,7 @@ class VisualPhaseA2Tests(TestCase):
         self.assertIn("window.innerWidth <= 760", full_form_source)
 
         page_response = self.client.get(reverse("agenda:inicio"))
-        self.assertContains(page_response, "?v=20260802-2")
+        self.assertContains(page_response, "?v=20261105-2")
 
 
     def test_loaded_modal_content_animates_and_mobile_layout_is_compact(self):
@@ -2202,10 +2244,10 @@ class VisualPhaseA2Tests(TestCase):
         self.assertRegex(
             html,
             r"/static/agenda/js/app(?:\.[0-9a-f]{12})?\.js"
-            r"\?v=20260802-2",
+            r"\?v=20261105-2",
         )
         self.assertEqual(html.count("?v=20260802-4"), 1)
-        self.assertEqual(html.count("?v=20260802-2"), 1)
+        self.assertEqual(html.count("?v=20261105-2"), 2)
 
 
     def test_mobile_form_rows_use_two_columns(self):

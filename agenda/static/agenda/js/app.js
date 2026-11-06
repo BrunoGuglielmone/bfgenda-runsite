@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const toast = document.querySelector("#app-toast");
     let modalTrigger = null;
     let toastTimer = null;
+    let filterSwipeDirection = null;
+    let filterSwipeInProgress = false;
 
     function currentRelativeUrl() {
         return `${window.location.pathname}${window.location.search}`;
@@ -212,16 +214,42 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error("La respuesta no contiene el contenido principal.");
             }
 
+            const incomingSwipeSurface = newMain.querySelector(
+                "[data-filter-swipe-surface]"
+            );
+            const incomingSwipeDirection = filterSwipeDirection;
+
+            if (
+                incomingSwipeSurface instanceof HTMLElement
+                && incomingSwipeDirection
+            ) {
+                incomingSwipeSurface.classList.add(
+                    `filter-swipe-enter-${incomingSwipeDirection}`
+                );
+            }
+
             await synchronizePageStyles(parsed);
             synchronizeThemePreference(parsed);
             currentMain.replaceWith(newMain);
             synchronizeApplicationShell(parsed);
+            filterSwipeDirection = null;
 
             if (parsed.title) {
                 document.title = parsed.title;
             }
 
             window.requestAnimationFrame(() => {
+                if (
+                    incomingSwipeSurface instanceof HTMLElement
+                    && incomingSwipeDirection
+                ) {
+                    window.requestAnimationFrame(() => {
+                        incomingSwipeSurface.classList.remove(
+                            `filter-swipe-enter-${incomingSwipeDirection}`
+                        );
+                    });
+                }
+
                 const targetId = targetUrl.hash
                     ? decodeURIComponent(targetUrl.hash.slice(1))
                     : "";
@@ -248,6 +276,8 @@ document.addEventListener("DOMContentLoaded", () => {
             document.dispatchEvent(new CustomEvent("agende:content-updated"));
         } catch (error) {
             console.error("No se pudo actualizar la pantalla:", error);
+            filterSwipeDirection = null;
+            filterSwipeInProgress = false;
             currentMain.classList.remove("content-refreshing");
             window.location.assign(targetUrl);
         }
@@ -616,6 +646,116 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("popstate", () => {
         refreshMain(window.location.href);
     });
+
+    let filterSwipeStart = null;
+    const mobileFilterMedia = window.matchMedia("(max-width: 760px)");
+    const reducedMotionMedia = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    );
+
+    const resetFilterSwipe = () => {
+        filterSwipeStart = null;
+    };
+
+    document.addEventListener(
+        "touchstart",
+        (event) => {
+            const target = event.target;
+
+            if (
+                filterSwipeInProgress
+                || !mobileFilterMedia.matches
+                || event.touches.length !== 1
+                || !(target instanceof Element)
+                || target.closest(
+                    "a, button, input, select, textarea, label, summary, "
+                    + "[contenteditable='true'], [data-no-filter-swipe]"
+                )
+            ) {
+                resetFilterSwipe();
+                return;
+            }
+
+            const surface = target.closest("[data-filter-swipe-surface]");
+
+            if (!(surface instanceof HTMLElement)) {
+                resetFilterSwipe();
+                return;
+            }
+
+            const touch = event.touches[0];
+            filterSwipeStart = {
+                surface,
+                x: touch.clientX,
+                y: touch.clientY,
+                startedAt: performance.now(),
+            };
+        },
+        {passive: true}
+    );
+
+    document.addEventListener(
+        "touchend",
+        (event) => {
+            if (
+                !filterSwipeStart
+                || event.changedTouches.length !== 1
+            ) {
+                resetFilterSwipe();
+                return;
+            }
+
+            const {surface, x, y, startedAt} = filterSwipeStart;
+            const touch = event.changedTouches[0];
+            const deltaX = touch.clientX - x;
+            const deltaY = touch.clientY - y;
+            const elapsed = performance.now() - startedAt;
+
+            resetFilterSwipe();
+
+            if (
+                !surface.isConnected
+                || Math.abs(deltaX) < 64
+                || Math.abs(deltaX) < Math.abs(deltaY) * 1.35
+                || elapsed > 900
+            ) {
+                return;
+            }
+
+            const main = surface.closest("#app-main-content");
+            const filters = main?.querySelector("[data-filter-swipe]");
+
+            if (!(filters instanceof HTMLElement)) {
+                return;
+            }
+
+            const links = Array.from(filters.querySelectorAll("a[href]"));
+            const activeIndex = links.findIndex((link) => (
+                link.classList.contains("active")
+            ));
+            const direction = deltaX < 0 ? "next" : "previous";
+            const targetIndex = activeIndex + (direction === "next" ? 1 : -1);
+            const targetLink = links[targetIndex];
+
+            if (!(targetLink instanceof HTMLAnchorElement)) {
+                return;
+            }
+
+            filterSwipeInProgress = true;
+            filterSwipeDirection = direction;
+            surface.setAttribute("aria-busy", "true");
+            surface.classList.add(`filter-swipe-out-${direction}`);
+
+            window.setTimeout(() => {
+                navigate(targetLink.href).finally(() => {
+                    filterSwipeInProgress = false;
+                });
+            }, reducedMotionMedia.matches ? 0 : 130);
+        },
+        {passive: true}
+    );
+
+    document.addEventListener("touchcancel", resetFilterSwipe, {passive: true});
 
     document.addEventListener("agende:content-updated", openAutomaticModal);
 

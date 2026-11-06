@@ -836,8 +836,10 @@ button {
         width: 40px;
         height: 40px;
         flex: 0 0 40px;
+        padding: 2px;
         border-radius: 12px;
-        object-fit: cover;
+        background: var(--primary-soft);
+        object-fit: contain;
     }
 
     .mobile-brand-copy {
@@ -950,9 +952,11 @@ button {
         height: auto;
         min-height: 70px;
         grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 2px;
-        padding: 5px 6px calc(5px + env(safe-area-inset-bottom));
+        gap: 4px;
+        padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+        border-top-color: var(--border);
         background: var(--surface-glass-strong);
+        box-shadow: 0 -10px 30px rgba(46, 26, 99, 0.12);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
     }
@@ -962,16 +966,27 @@ button {
         justify-content: center;
         border-radius: 12px;
         font-size: 0.64rem;
+        font-weight: 750;
+        transition:
+            background-color 160ms ease,
+            color 160ms ease,
+            transform 160ms ease;
     }
 
-    .mobile-link span {
-        font-size: 1.15rem;
-        line-height: 1;
+    .mobile-link svg {
+        width: 21px;
+        height: 21px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
     }
 
     .mobile-link.active {
         background: var(--primary-soft);
         color: var(--primary-dark);
+        transform: translateY(-1px);
     }
 
     .mobile-quick-create {
@@ -1027,6 +1042,75 @@ button {
     .mobile-header-action {
         width: 39px;
         height: 39px;
+    }
+
+    .mobile-navigation {
+        gap: 2px;
+        padding-inline: 5px;
+    }
+
+    .mobile-link {
+        font-size: 0.58rem;
+    }
+}
+
+/* ============================================================
+   NAVEGACIÓN GESTUAL ENTRE FILTROS
+   ============================================================ */
+
+.filter-swipe-hint {
+    display: none;
+}
+
+@media (max-width: 760px) {
+    .filter-swipe-hint {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        margin: -12px 0 12px;
+        color: var(--text-secondary);
+        font-size: 0.7rem;
+        font-weight: 650;
+    }
+
+    .filter-swipe-hint span {
+        color: var(--primary);
+        font-size: 0.9rem;
+    }
+
+    [data-filter-swipe-surface] {
+        touch-action: pan-y;
+        will-change: transform, opacity;
+        transition:
+            transform 140ms ease,
+            opacity 140ms ease;
+    }
+
+    [data-filter-swipe-surface].filter-swipe-out-next {
+        opacity: 0.18;
+        transform: translateX(-30px);
+    }
+
+    [data-filter-swipe-surface].filter-swipe-out-previous {
+        opacity: 0.18;
+        transform: translateX(30px);
+    }
+
+    [data-filter-swipe-surface].filter-swipe-enter-next {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    [data-filter-swipe-surface].filter-swipe-enter-previous {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-filter-swipe-surface] {
+        transition: none;
     }
 }
 
