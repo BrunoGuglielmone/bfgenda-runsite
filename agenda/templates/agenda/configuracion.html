@@ -6,7 +6,7 @@
 {% block extra_css %}
     <link data-page-style
         rel="stylesheet"
-        href="{% static 'agenda/css/configuracion.css' %}?v=20261106-1"
+        href="{% static 'agenda/css/configuracion.css' %}?v=20261106-2"
     >
 {% endblock %}
 
@@ -104,6 +104,32 @@
                     La paleta de BFGenda se adapta a tu elección y se conserva
                     en la computadora y el celular.
                 </p>
+            </div>
+        </article>
+
+        <article class="settings-card settings-card-quick-access">
+            <span class="settings-card-icon" aria-hidden="true">#</span>
+
+            <div class="settings-card-content">
+                <p class="settings-card-label">Acceso rápido</p>
+                <h2>
+                    {% if acceso_rapido %}
+                        PIN configurado
+                    {% else %}
+                        Falta crear el PIN
+                    {% endif %}
+                </h2>
+                <p>
+                    Autoriza tareas y eventos desde el login sin abrir una
+                    sesión completa. El PIN nunca se muestra ni se guarda visible.
+                </p>
+                <a
+                    class="settings-card-action"
+                    href="{% url 'agenda:configuracion_pin' %}"
+                    data-modal-url="{% url 'agenda:configuracion_pin' %}"
+                >
+                    {% if acceso_rapido %}Cambiar PIN{% else %}Crear PIN{% endif %}
+                </a>
             </div>
         </article>
 

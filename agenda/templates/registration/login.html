@@ -66,11 +66,11 @@
 
     <link
         rel="stylesheet"
-        href="{% static 'agenda/css/login.css' %}?v=20261106-1"
+        href="{% static 'agenda/css/login.css' %}?v=20261106-2"
     >
 </head>
 
-<body>
+<body data-login-initial-panel="{{ active_panel|default:'login' }}">
     <div class="login-background" aria-hidden="true"></div>
 
     <header class="login-navigation">
@@ -86,25 +86,30 @@
         </a>
 
         <nav class="login-navigation-menu" aria-label="Accesos de BFGenda">
-            <span class="login-navigation-item is-active" aria-current="page">
+            <button
+                class="login-navigation-item {% if active_panel == 'login' %}is-active{% endif %}"
+                type="button"
+                data-login-panel-target="login"
+                aria-selected="{% if active_panel == 'login' %}true{% else %}false{% endif %}"
+            >
                 Ingresar
-            </span>
-            <span
-                class="login-navigation-item is-upcoming"
-                aria-disabled="true"
-                title="Disponible en la próxima fase"
+            </button>
+            <button
+                class="login-navigation-item {% if active_panel == 'tarea' %}is-active{% endif %}"
+                type="button"
+                data-login-panel-target="tarea"
+                aria-selected="{% if active_panel == 'tarea' %}true{% else %}false{% endif %}"
             >
                 Tarea rápida
-                <small>Próximo</small>
-            </span>
-            <span
-                class="login-navigation-item is-upcoming"
-                aria-disabled="true"
-                title="Disponible en la próxima fase"
+            </button>
+            <button
+                class="login-navigation-item {% if active_panel == 'evento' %}is-active{% endif %}"
+                type="button"
+                data-login-panel-target="evento"
+                aria-selected="{% if active_panel == 'evento' %}true{% else %}false{% endif %}"
             >
                 Evento rápido
-                <small>Próximo</small>
-            </span>
+            </button>
         </nav>
     </header>
 
@@ -142,14 +147,6 @@
                 </div>
             </header>
 
-            <div class="login-introduction">
-                <h2>Iniciar sesión</h2>
-
-                <p>
-                    Ingresa para continuar organizando tu día.
-                </p>
-            </div>
-
             {% for message in messages %}
                 <div
                     class="form-message {% if message.tags == 'error' %}error-message{% else %}information-message{% endif %}"
@@ -159,74 +156,268 @@
                 </div>
             {% endfor %}
 
-            {% if form.errors %}
-                <div class="form-message error-message" role="alert">
-                    El usuario o la contraseña no son correctos.
+            <section
+                class="login-panel"
+                data-login-panel="login"
+                {% if active_panel != "login" %}hidden{% endif %}
+            >
+                <div class="login-introduction">
+                    <h2>Iniciar sesión</h2>
+                    <p>Ingresa para continuar organizando tu día.</p>
                 </div>
-            {% endif %}
 
-            {% if next and user.is_authenticated %}
-                <div class="form-message error-message" role="alert">
-                    Tu cuenta no tiene permiso para abrir esta página.
-                </div>
-            {% endif %}
-
-            <form method="post" class="login-form">
-                {% csrf_token %}
-
-                <div class="form-field">
-                    <label for="{{ form.username.id_for_label }}">
-                        Usuario
-                    </label>
-
-                    <div class="login-input-shell">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <circle cx="12" cy="8" r="3.5"></circle>
-                            <path d="M5.5 19c.7-3.3 3-5 6.5-5s5.8 1.7 6.5 5"></path>
-                        </svg>
-                        <input
-                            type="text"
-                            name="{{ form.username.html_name }}"
-                            id="{{ form.username.id_for_label }}"
-                            value="{{ form.username.value|default:'' }}"
-                            autocomplete="username"
-                            placeholder="Escribe tu usuario"
-                            required
-                            data-autofocus="true"
-                        >
+                {% if form.errors %}
+                    <div class="form-message error-message" role="alert">
+                        El usuario o la contraseña no son correctos.
                     </div>
-                </div>
-
-                <div class="form-field">
-                    <label for="{{ form.password.id_for_label }}">
-                        Contraseña
-                    </label>
-
-                    <div class="login-input-shell">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <rect x="5" y="10" width="14" height="10" rx="3"></rect>
-                            <path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10"></path>
-                        </svg>
-                        <input
-                            type="password"
-                            name="{{ form.password.html_name }}"
-                            id="{{ form.password.id_for_label }}"
-                            autocomplete="current-password"
-                            placeholder="Escribe tu contraseña"
-                            required
-                        >
-                    </div>
-                </div>
-
-                {% if next %}
-                    <input type="hidden" name="next" value="{{ next }}">
                 {% endif %}
 
-                <button class="login-button" type="submit">
-                    <span>Ingresar a BFGenda</span>
-                    <span aria-hidden="true">→</span>
+                {% if next and user.is_authenticated %}
+                    <div class="form-message error-message" role="alert">
+                        Tu cuenta no tiene permiso para abrir esta página.
+                    </div>
+                {% endif %}
+
+                <form method="post" class="login-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="login_action" value="login">
+
+                    <div class="form-field">
+                        <label for="{{ form.username.id_for_label }}">Usuario</label>
+
+                        <div class="login-input-shell">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="8" r="3.5"></circle>
+                                <path d="M5.5 19c.7-3.3 3-5 6.5-5s5.8 1.7 6.5 5"></path>
+                            </svg>
+                            <input
+                                type="text"
+                                name="{{ form.username.html_name }}"
+                                id="{{ form.username.id_for_label }}"
+                                value="{{ form.username.value|default:'' }}"
+                                autocomplete="username"
+                                placeholder="Escribe tu usuario"
+                                required
+                                data-autofocus="true"
+                                data-remembered-username
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="{{ form.password.id_for_label }}">Contraseña</label>
+
+                        <div class="login-input-shell">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="5" y="10" width="14" height="10" rx="3"></rect>
+                                <path d="M8.5 10V7.5a3.5 3.5 0 0 1 7 0V10"></path>
+                            </svg>
+                            <input
+                                type="password"
+                                name="{{ form.password.html_name }}"
+                                id="{{ form.password.id_for_label }}"
+                                autocomplete="current-password"
+                                placeholder="Escribe tu contraseña"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <label class="remember-username-option">
+                        <input type="checkbox" data-remember-username-toggle>
+                        <span>Recordar mi usuario en este dispositivo</span>
+                    </label>
+
+                    {% if next %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+
+                    <button class="login-button" type="submit">
+                        <span>Ingresar a BFGenda</span>
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+            </section>
+
+            <section
+                class="login-panel"
+                data-login-panel="tarea"
+                {% if active_panel != "tarea" %}hidden{% endif %}
+            >
+                <div class="login-introduction quick-access-introduction">
+                    <p class="quick-access-eyebrow">Carga rápida</p>
+                    <h2>Nueva tarea</h2>
+                    <p>Guárdala en tu cuenta sin abrir una sesión completa.</p>
+                </div>
+
+                <form method="post" class="login-form quick-access-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="login_action" value="quick_task">
+                    {{ quick_task_form.non_field_errors }}
+
+                    <div class="form-field">
+                        {{ quick_task_form.titulo.label_tag }}
+                        {{ quick_task_form.titulo }}
+                        {{ quick_task_form.titulo.errors }}
+                    </div>
+
+                    <div class="quick-access-grid">
+                        <div class="form-field">
+                            {{ quick_task_form.fecha_limite.label_tag }}
+                            {{ quick_task_form.fecha_limite }}
+                            {{ quick_task_form.fecha_limite.errors }}
+                        </div>
+                        <div class="form-field">
+                            {{ quick_task_form.hora_limite.label_tag }}
+                            {{ quick_task_form.hora_limite }}
+                            {{ quick_task_form.hora_limite.errors }}
+                        </div>
+                    </div>
+
+                    <div class="quick-access-credentials">
+                        <div class="form-field">
+                            {{ quick_task_form.username.label_tag }}
+                            {{ quick_task_form.username }}
+                            {{ quick_task_form.username.errors }}
+                        </div>
+                        <div class="form-field">
+                            {{ quick_task_form.pin.label_tag }}
+                            {{ quick_task_form.pin }}
+                            {{ quick_task_form.pin.errors }}
+                        </div>
+                    </div>
+
+                    <button class="login-button" type="submit">
+                        <span>Guardar tarea</span>
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+
+                <button
+                    class="quick-access-recovery-link"
+                    type="button"
+                    data-login-panel-target="recuperar"
+                >
+                    ¿Olvidaste tu PIN?
                 </button>
-            </form>
+            </section>
+
+            <section
+                class="login-panel"
+                data-login-panel="evento"
+                {% if active_panel != "evento" %}hidden{% endif %}
+            >
+                <div class="login-introduction quick-access-introduction">
+                    <p class="quick-access-eyebrow">Carga rápida</p>
+                    <h2>Nuevo evento</h2>
+                    <p>Programa un compromiso sin abrir una sesión completa.</p>
+                </div>
+
+                <form method="post" class="login-form quick-access-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="login_action" value="quick_event">
+                    {{ quick_event_form.non_field_errors }}
+
+                    <div class="form-field">
+                        {{ quick_event_form.titulo.label_tag }}
+                        {{ quick_event_form.titulo }}
+                        {{ quick_event_form.titulo.errors }}
+                    </div>
+
+                    <div class="quick-access-grid">
+                        <div class="form-field">
+                            {{ quick_event_form.inicio.label_tag }}
+                            {{ quick_event_form.inicio }}
+                            {{ quick_event_form.inicio.errors }}
+                        </div>
+                        <div class="form-field">
+                            {{ quick_event_form.duracion_minutos.label_tag }}
+                            {{ quick_event_form.duracion_minutos }}
+                            {{ quick_event_form.duracion_minutos.errors }}
+                        </div>
+                    </div>
+
+                    <div class="quick-access-credentials">
+                        <div class="form-field">
+                            {{ quick_event_form.username.label_tag }}
+                            {{ quick_event_form.username }}
+                            {{ quick_event_form.username.errors }}
+                        </div>
+                        <div class="form-field">
+                            {{ quick_event_form.pin.label_tag }}
+                            {{ quick_event_form.pin }}
+                            {{ quick_event_form.pin.errors }}
+                        </div>
+                    </div>
+
+                    <button class="login-button" type="submit">
+                        <span>Guardar evento</span>
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+
+                <button
+                    class="quick-access-recovery-link"
+                    type="button"
+                    data-login-panel-target="recuperar"
+                >
+                    ¿Olvidaste tu PIN?
+                </button>
+            </section>
+
+            <section
+                class="login-panel"
+                data-login-panel="recuperar"
+                {% if active_panel != "recuperar" %}hidden{% endif %}
+            >
+                <div class="login-introduction quick-access-introduction">
+                    <p class="quick-access-eyebrow">Recuperación segura</p>
+                    <h2>Reemplazar PIN</h2>
+                    <p>Confirma tu contraseña normal y elige cuatro números nuevos.</p>
+                </div>
+
+                <form method="post" class="login-form quick-access-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="login_action" value="recover_pin">
+                    {{ pin_recovery_form.non_field_errors }}
+
+                    <div class="form-field">
+                        {{ pin_recovery_form.username.label_tag }}
+                        {{ pin_recovery_form.username }}
+                        {{ pin_recovery_form.username.errors }}
+                    </div>
+                    <div class="form-field">
+                        {{ pin_recovery_form.password.label_tag }}
+                        {{ pin_recovery_form.password }}
+                        {{ pin_recovery_form.password.errors }}
+                    </div>
+                    <div class="quick-access-grid">
+                        <div class="form-field">
+                            {{ pin_recovery_form.pin.label_tag }}
+                            {{ pin_recovery_form.pin }}
+                            {{ pin_recovery_form.pin.errors }}
+                        </div>
+                        <div class="form-field">
+                            {{ pin_recovery_form.pin_confirmation.label_tag }}
+                            {{ pin_recovery_form.pin_confirmation }}
+                            {{ pin_recovery_form.pin_confirmation.errors }}
+                        </div>
+                    </div>
+
+                    <button class="login-button" type="submit">
+                        <span>Guardar nuevo PIN</span>
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+
+                <button
+                    class="quick-access-recovery-link"
+                    type="button"
+                    data-login-panel-target="tarea"
+                >
+                    Volver al acceso rápido
+                </button>
+            </section>
 
             {% if puede_detener_agende %}
                 <section
@@ -308,7 +499,7 @@
     </main>
 
     <script
-        src="{% static 'agenda/js/login.js' %}?v=20260821-1"
+        src="{% static 'agenda/js/login.js' %}?v=20261106-2"
         defer
     ></script>
 

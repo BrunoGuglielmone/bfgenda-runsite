@@ -30,7 +30,7 @@ from .notifications import (
     suscripcion_push_guardar,
     suscripcion_push_probar,
 )
-from .preferences import configuracion, configuracion_editar
+from .preferences import configuracion, configuracion_editar, configuracion_pin
 from .search import busqueda
 from .events import (
     evento_cancelar,
@@ -69,6 +69,7 @@ __all__ = [
     "suscripcion_push_probar",
     "configuracion",
     "configuracion_editar",
+    "configuracion_pin",
     "backup_crear",
     "backup_descargar",
     "backup_restaurar",

@@ -1110,7 +1110,7 @@ class AgendaViewsTests(TestCase):
         css = css_path.read_text(encoding="utf-8")
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("?v=20261106-1", html)
+        self.assertIn("?v=20261106-2", html)
         self.assertIn('class="settings-workspace"', html)
         self.assertIn('aria-label="Secciones de configuración"', html)
         self.assertIn('id="preferencias"', html)

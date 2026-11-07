@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from agenda.forms import PreferenciasUsuarioForm
+from agenda.forms_quick import QuickPinConfigurationForm
 from agenda.services.backups import (
     BACKUP_AUTOMATIC,
     BACKUP_MANUAL,
@@ -11,7 +12,8 @@ from agenda.services.backups import (
     list_backups,
     sqlite_backups_enabled,
 )
-from agenda.models import ConfiguracionAutomatizacion
+from agenda.models import AccesoRapidoUsuario, ConfiguracionAutomatizacion
+from agenda.services.quick_access import set_user_pin
 from agenda.services.preferences import get_user_preferences
 from agenda.services.retention import COMPLETED_TASK_RETENTION_MONTHS
 from agenda.services.task_queries import UNDATED_REMINDER_SESSION_KEY
@@ -29,6 +31,23 @@ def _preferences_form_config(*, cancel_url: str) -> FormViewConfig:
         ),
         icon="⚙",
         submit_label="Guardar preferencias",
+        cancel_url=cancel_url,
+        hidden_fields=(
+            {"name": "return_url", "value": cancel_url},
+        ),
+    )
+
+
+def _quick_pin_form_config(*, cancel_url: str, configured: bool) -> FormViewConfig:
+    return FormViewConfig(
+        eyebrow="Acceso rápido",
+        title="Cambiar PIN" if configured else "Crear PIN",
+        description=(
+            "El PIN permite agregar tareas y eventos desde el login sin abrir "
+            "una sesión completa. Para proteger la cuenta, confirma tu contraseña."
+        ),
+        icon="#",
+        submit_label="Guardar PIN",
         cancel_url=cancel_url,
         hidden_fields=(
             {"name": "return_url", "value": cancel_url},
@@ -68,6 +87,11 @@ def configuracion(request):
             and settings.AGENDE_VAPID_PRIVATE_KEY
             and settings.AGENDE_VAPID_SUBJECT
         ),
+        "acceso_rapido": (
+            AccesoRapidoUsuario.objects
+            .filter(usuario=request.user)
+            .first()
+        ),
     }
     return render(request, "agenda/configuracion.html", context)
 
@@ -96,4 +120,38 @@ def configuracion_editar(request):
         return form_response(request, form, config, invalid=True)
 
     form = PreferenciasUsuarioForm(instance=preferences)
+    return form_response(request, form, config)
+
+
+@login_required
+def configuracion_pin(request):
+    """Crea o reemplaza el PIN sin exponer nunca su valor actual."""
+
+    fallback = reverse("agenda:configuracion")
+    return_url = get_return_url(request, fallback)
+    configured = AccesoRapidoUsuario.objects.filter(
+        usuario=request.user
+    ).exists()
+    config = _quick_pin_form_config(
+        cancel_url=return_url,
+        configured=configured,
+    )
+
+    if request.method == "POST":
+        form = QuickPinConfigurationForm(
+            request.POST,
+            usuario=request.user,
+        )
+
+        if form.is_valid():
+            set_user_pin(request.user, form.cleaned_data["pin"])
+            return saved_response(
+                request,
+                message="El PIN de acceso rápido se guardó correctamente.",
+                redirect_url=return_url,
+            )
+
+        return form_response(request, form, config, invalid=True)
+
+    form = QuickPinConfigurationForm(usuario=request.user)
     return form_response(request, form, config)

@@ -1,6 +1,7 @@
 from datetime import time
 
 from django.conf import settings
+from django.contrib.auth.hashers import check_password, make_password
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -126,6 +127,38 @@ class PreferenciasUsuario(models.Model):
 
     def __str__(self):
         return f"Preferencias de {self.usuario}"
+
+
+class AccesoRapidoUsuario(models.Model):
+    """PIN cifrado que autoriza cargas rápidas sin abrir una sesión."""
+
+    usuario = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="acceso_rapido",
+        verbose_name="usuario",
+    )
+    pin_hash = models.CharField(
+        max_length=128,
+        verbose_name="PIN cifrado",
+    )
+    actualizado_en = models.DateTimeField(
+        auto_now=True,
+        verbose_name="actualizado en",
+    )
+
+    class Meta:
+        verbose_name = "acceso rápido del usuario"
+        verbose_name_plural = "accesos rápidos de los usuarios"
+
+    def set_pin(self, raw_pin: str) -> None:
+        self.pin_hash = make_password(raw_pin)
+
+    def check_pin(self, raw_pin: str) -> bool:
+        return check_password(raw_pin, self.pin_hash)
+
+    def __str__(self):
+        return f"Acceso rápido de {self.usuario}"
 
 
 class SuscripcionPush(models.Model):

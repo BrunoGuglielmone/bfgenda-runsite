@@ -55,6 +55,11 @@ urlpatterns = [
         name="configuracion_editar",
     ),
     path(
+        "configuracion/acceso-rapido/",
+        views.configuracion_pin,
+        name="configuracion_pin",
+    ),
+    path(
         "configuracion/copias/crear/",
         views.backup_crear,
         name="backup_crear",
